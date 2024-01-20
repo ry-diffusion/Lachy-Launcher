@@ -1,0 +1,21 @@
+set(CPACK_PACKAGE_NAME "mcpelauncher-core")
+set(CPACK_PACKAGE_VENDOR "mcpelauncher")
+set(CPACK_PACKAGE_VERSION "${MANIFEST_GIT_COMMIT_HASH}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Dependencies of the Launcher for Minecraft: Pocket Edition")
+set(CPACK_PACKAGE_CONTACT "https://github.com/ChristopherHX/mcpelauncher-manifest/issues")
+set(CPACK_GENERATOR "TGZ;DEB")
+if(NOT DEFINED CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm" OR CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE armhf)
+    else()
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386)
+    endif()
+endif()
+set(CPACK_DEBIAN_PACKAGE_VERSION "${BUILD_TIMESTAMP}-${MANIFEST_GIT_COMMIT_HASH}")
+
+set(CPACK_INSTALL_CMAKE_PROJECTS
+        "${CMAKE_BINARY_DIR};mcpelauncher-bin-libs;mcpelauncher-bin-libs;/")
+set(CPACK_OUTPUT_CONFIG_FILE CPackConfig.cmake)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
+
+include(CPack)
