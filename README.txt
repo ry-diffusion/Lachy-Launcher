@@ -1,4 +1,12 @@
 * THIS IS A FORK.
 
+Esse launcher tem o foco em especificamente melhorar o suporte da versão 0.15.10 no mesmo.
+=========================================================================================
+
+** Features
+ - [x] Win10 UI
+ - [ ] Resize Window
+ - [ ] Native wayland client
+
 ** Install 32 bit libraries (Fedora) Unverified.
 sudo dnf install -y glibc-devel.i686 glibc-devel libpng-devel-2:1.6.37-15.fc39.i686  libstdc++-devel.i686 libevdev-devel.i686 libcurl-devel.i686 mesa-libEGL-devel.i686 systemd-devel.i686 
