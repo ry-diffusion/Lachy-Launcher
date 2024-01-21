@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "stdexcept": "cpp"
+    },
+    "cmake.generator": "Unix Makefiles",
+    "cmake.configureArgs": [
+        "-DCMAKE_TOOLCHAIN_FILE=./cmake/linux32.cmake"
+    ],
+}

@@ -1,18 +1,26 @@
-include(ExternalProject)
+set (GLFW_USE_WAYLAND FALSE)
+set (GLFW_VERSION 3.3.8)
+set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-ExternalProject_Add(
-        glfw3_ext
-        URL "https://github.com/ChristopherHX/glfw/archive/master.zip"
-        INSTALL_DIR ${CMAKE_BINARY_DIR}/ext/glfw
-        CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/ext/glfw" "-DBUILD_SHARED_LIBS=OFF" "-DCMAKE_C_FLAGS=-m32" "-DCMAKE_LINK_FLAGS=-m32" "-DCMAKE_LIBRARY_ARCHITECTURE=${CMAKE_LIBRARY_ARCHITECTURE}"
-)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ext/glfw/include/)
-add_library(glfw3 STATIC IMPORTED)
-add_dependencies(glfw3 glfw3_ext)
-set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/ext/glfw/lib/libglfw3.a)
-if (APPLE)
-    set_property(TARGET glfw3 PROPERTY INTERFACE_LINK_LIBRARIES "-framework Cocoa" "-framework IOKit" "-framework CoreFoundation" "-framework CoreVideo")
-else()
-    set_property(TARGET glfw3 PROPERTY INTERFACE_LINK_LIBRARIES ${X11_X11_LIB} ${X11_Xcursor_LIB} ${X11_Xrandr_LIB} ${X11_Xxf86vm_LIB} ${X11_Xinerama_LIB})
-endif()
-set_property(TARGET glfw3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/ext/glfw/include/)
+if (NOT glfw3_FOUND)
+  include(FetchContent)
+  FetchContent_Declare(
+    glfw3
+    URL https://github.com/glfw/glfw/releases/download/${GLFW_VERSION}/glfw-${GLFW_VERSION}.zip
+  )
+  FetchContent_GetProperties(glfw3)
+
+   if (NOT glfw3_POPULATED)
+    set(FETCHCONTENT_QUIET NO)
+    FetchContent_Populate(glfw3)
+
+    
+    add_subdirectory(${glfw3_SOURCE_DIR} ${glfw3_BINARY_DIR})
+  endif()
+endif() 
+
+
+
+
