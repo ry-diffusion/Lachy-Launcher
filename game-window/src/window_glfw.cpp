@@ -1,4 +1,5 @@
 #include "window_glfw.h"
+#include "GLFW/glfw3.h"
 #include "joystick_manager_glfw.h"
 
 #include <codecvt>
@@ -10,6 +11,9 @@
 GLFWGameWindow::GLFWGameWindow(const std::string& title, int width, int height, GraphicsApi api) :
         GameWindow(title, width, height, api), windowedWidth(width), windowedHeight(height) {
     glfwDefaultWindowHints();
+
+    glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+
     if (api == GraphicsApi::OPENGL_ES2) {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
@@ -22,6 +26,7 @@ GLFWGameWindow::GLFWGameWindow(const std::string& title, int width, int height, 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     }
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, _glfwWindowSizeCallback);
     glfwSetCursorPosCallback(window, _glfwCursorPosCallback);

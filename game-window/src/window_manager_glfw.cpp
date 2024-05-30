@@ -1,11 +1,17 @@
 #include <stdexcept>
 #include "window_manager_glfw.h"
+#include <GLFW/glfw3.h>
 #include "window_glfw.h"
 #include "joystick_manager_glfw.h"
 
 GLFWWindowManager::GLFWWindowManager() {
-    if (glfwInit() != GLFW_TRUE)
-        throw std::runtime_error("glfwInit error");
+    if (glfwInit() != GLFW_TRUE) {
+        const char *description;
+        int code = glfwGetError(&description);
+
+        throw std::runtime_error("An error occurred while initializing GLFW: " + std::string(description));
+    }
+
     GLFWJoystickManager::init();
 }
 
