@@ -54,35 +54,24 @@ void WindowCallbacks::registerCallbacks() {
 }
 
 void WindowCallbacks::onWindowSizeCallback(int w, int h) {
-
-  std::cout << "Window Resized: " << w << "x" << h << "\n";
-
-  auto nativeRenderingSize = (void (*)(void *, int, int))hybris_dlsym(
+  auto nativeSetRenderingSize = (void (*)(void *, int, int))hybris_dlsym(
       handle, "_ZN15MinecraftClient16setRenderingSizeEii");
 
   auto nativeSetUI = (void (*)(void *, int, int, float))hybris_dlsym(
       handle, "_ZN15MinecraftClient17setUISizeAndScaleEiif");
 
-  if (nativeRenderingSize) {
-    void *mc = *this->MinecraftClient;
-    Log::info("Launcher", "Resizing... App is: 0x%x", mc);
-    nativeRenderingSize(mc, w, h);
-    nativeSetUI(mc, w, h, 1.0f);
-  } else {
-    std::cout << "nativeResize not found\n";
+  void *mc = *this->MinecraftClient;
+  Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, w, h);
+  nativeSetRenderingSize(mc, w, h);
 
-    return;
-    std::thread([&]() {
-      activity.callbacks->onPause(&activity);
-      activity.callbacks->onStop(&activity);
-      activity.callbacks->onNativeWindowDestroyed(&activity,
-                                                  (ANativeWindow *)&window);
-      activity.callbacks->onNativeWindowCreated(&activity,
-                                                (ANativeWindow *)&window);
-      activity.callbacks->onStart(&activity);
-      activity.callbacks->onResume(&activity);
-    }).detach();
-  }
+  int scale = 1.0f;
+
+  if (w >= 1280 && h >= 720)
+    scale = 3.0f;
+  else if (w >= 640 && h >= 480)
+    scale = 2.0f;
+
+  nativeSetUI(mc, w, h, scale);
 }
 
 void WindowCallbacks::onClose() {
