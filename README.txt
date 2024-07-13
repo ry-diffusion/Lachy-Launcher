@@ -5,10 +5,10 @@ Esse launcher tem o foco em especificamente melhorar o suporte da versão 0.15.1
 
 ** Features
  - [x] Win10 UI
- - [ ] Resize Window
+ - [x] Resize Window
  - [x] Native wayland client
 
-** tmp how to build wayland
+** Como buildar (Wayland)
 -->  cmake -B build -S . -D GAMEWINDOW_SYSTEM=GLFW -D GLFW_USE_WAYLAND=1  -DCMAKE_TOOLCHAIN_FILE=cmake/linux32.cmake && cmake --build build -j$(nproc)
 
 ** Install 32 bit libraries (Fedora) Unverified.
