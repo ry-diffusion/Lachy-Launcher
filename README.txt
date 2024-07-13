@@ -5,7 +5,7 @@ Esse launcher tem o foco em especificamente melhorar o suporte da versão 0.15.1
 
 ** Features
  - [x] Win10 UI
- - [ ] Resize Window
+ - [x] Resize Window
  - [x] Native wayland client
 
 ** tmp how to build wayland
