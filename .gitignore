@@ -33,3 +33,6 @@
 
 
 build/
+
+mcpe/
+.cache/
