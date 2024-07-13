@@ -63,15 +63,7 @@ void WindowCallbacks::onWindowSizeCallback(int w, int h) {
   void *mc = *this->MinecraftClient;
   Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, w, h);
   nativeSetRenderingSize(mc, w, h);
-
-  int scale = 1.0f;
-
-  if (w >= 1280 && h >= 720)
-    scale = 3.0f;
-  else if (w >= 640 && h >= 480)
-    scale = 2.0f;
-
-  nativeSetUI(mc, w, h, scale);
+  nativeSetUI(mc, w, h, 0.0f);
 }
 
 void WindowCallbacks::onClose() {
