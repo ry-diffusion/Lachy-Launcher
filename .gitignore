@@ -7,6 +7,10 @@
 *.o
 *.obj
 
+# clangd stuff
+.cache/
+compile_commands.json
+
 # Precompiled Headers
 *.gch
 *.pch

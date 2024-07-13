@@ -1,4 +1,5 @@
 #include "window_glfw.h"
+#include "GLFW/glfw3.h"
 #include "joystick_manager_glfw.h"
 
 #include <codecvt>

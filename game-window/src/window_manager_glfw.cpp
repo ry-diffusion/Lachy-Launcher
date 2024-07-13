@@ -1,17 +1,20 @@
 #include "window_manager_glfw.h"
+#include <GLFW/glfw3.h>
+#include "window_glfw.h"
+
 #include "joystick_manager_glfw.h"
 #include "window_glfw.h"
 #include <stdexcept>
 
 GLFWWindowManager::GLFWWindowManager() {
-  if (glfwInit() != GLFW_TRUE) {
-    const char *description;
-    int code = glfwGetError(&description);
+    if (glfwInit() != GLFW_TRUE) {
+        const char *description;
+        int code = glfwGetError(&description);
 
-    throw std::runtime_error("Failed to init GLFW: " +
-                             std::string(description));
-  }
-  GLFWJoystickManager::init();
+        throw std::runtime_error("An error occurred while initializing GLFW: " + std::string(description));
+    }
+
+    GLFWJoystickManager::init();
 }
 
 GameWindowManager::ProcAddrFunc GLFWWindowManager::getProcAddrFunc() {
