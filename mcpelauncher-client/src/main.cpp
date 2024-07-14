@@ -15,7 +15,7 @@
 #include <minecraft/MinecraftGame.h>
 
 #include <functional>
-
+static bool isModern = false;
 #include "hbui_patch.h"
 #include "minecraft/MinecraftClient.h"
 #include "window_callbacks.h"
@@ -30,6 +30,7 @@
 #include <dirent.h>
 #include <hybris/hook.h>
 #include <jnivm.h>
+#include <minecraft/GenericMinecraft.h>
 #include <signal.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
@@ -40,9 +41,6 @@
 #include "JNIBinding.h"
 #include "OpenSLESPatch.h"
 #include "native_activity.h"
-static char clientInitBackup[5] = { 0 };
-unsigned char *clientInit;
-MinecraftClient *minecraftClient = nullptr;
 
 #define EGL_NONE 0x3038
 #define EGL_TRUE 1
@@ -57,7 +55,12 @@ using EGLConfig = void *;
 using NativeWindowType = void *;
 using NativeDisplayType = void *;
 
-JNIEnv *jnienv = 0;
+static char clientInitBackup[5] = { 0 };
+static char clientInstanceBackup[5] = { 0 };
+unsigned char *clientInit, *clientInstance;
+
+GenericMinecraft *minecraftClient = nullptr;
+JNIEnv *jnienv = nullptr;
 
 void printVersionInfo();
 
@@ -132,32 +135,33 @@ namespace FMOD
 }  // namespace FMOD
 
 // Translate arm softfp to armhf
-int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_setVolume(
-    FMOD::ChannelControl *ch, float f)
+int32_t __attribute__((pcs("aapcs")))
+FMOD_ChannelControl_setVolume(FMOD::ChannelControl *ch, float f)
 {
   return ch->setVolume(f);
 }
 
-int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_setPitch(
-    FMOD::ChannelControl *ch, float p)
+int32_t __attribute__((pcs("aapcs")))
+FMOD_ChannelControl_setPitch(FMOD::ChannelControl *ch, float p)
 {
   return ch->setPitch(p);
 }
 
-int32_t __attribute__((pcs("aapcs"))) FMOD_System_set3DSettings(
-    FMOD::System *sys, float x, float y, float z)
+int32_t __attribute__((pcs("aapcs")))
+FMOD_System_set3DSettings(FMOD::System *sys, float x, float y, float z)
 {
   return sys->set3DSettings(x, y, z);
 }
 
-int32_t __attribute__((pcs("aapcs"))) FMOD_Sound_set3DMinMaxDistance(
-    FMOD::Sound *s, float m, float M)
+int32_t __attribute__((pcs("aapcs")))
+FMOD_Sound_set3DMinMaxDistance(FMOD::Sound *s, float m, float M)
 {
   return s->set3DMinMaxDistance(m, M);
 }
 
-int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_addFadePoint(
-    FMOD::ChannelControl *ch, unsigned long long i, float f)
+int32_t __attribute__((pcs("aapcs")))
+FMOD_ChannelControl_addFadePoint(FMOD::ChannelControl *ch, unsigned long long i,
+                                 float f)
 {
   return ch->addFadePoint(i, f);
 }
@@ -579,7 +583,24 @@ int main(int argc, char *argv[])
         true);
   }
 
-  auto clientInitSym = hybris_dlsym(handle, "_ZN15MinecraftClient4initEv");
+  MinecraftUtils::initSymbolBindings(handle);
+  void *clientInitSym;
+
+  if (*SharedConstants::MajorVersion >= 1 &&
+      *SharedConstants::MinorVersion >= 1)
+  {
+    Log::info("Launcher", "Using Modern Game Init");
+    isModern = true;
+    clientInitSym = hybris_dlsym(handle, "_ZN13MinecraftGame4initEv");
+  }
+  else
+  {
+    Log::info("Launcher", "Using Legacy Client Init");
+    clientInitSym = hybris_dlsym(handle, "_ZN15MinecraftClient4initEv");
+  }
+
+  assert(clientInitSym != nullptr);
+
   if (clientInitSym)
   {
     clientInit = (unsigned char *)clientInitSym;
@@ -588,7 +609,18 @@ int main(int argc, char *argv[])
         clientInitSym,
         (void *)+[](void *clazz)
         {
-          minecraftClient = static_cast<MinecraftClient *>(clazz);
+          auto client = static_cast<MinecraftClient *>(clazz);
+
+          if (isModern)
+          {
+            auto game = static_cast<MinecraftGame *>(clazz);
+            minecraftClient = new GenericMinecraft(game, nullptr);
+          }
+          else
+          {
+            minecraftClient = new GenericMinecraft(nullptr, client);
+          }
+
           memcpy(&clientInit[0], clientInitBackup, sizeof(int) + 1);
 
           auto initClient = (void (*)(void *))(clientInit);
@@ -596,14 +628,41 @@ int main(int argc, char *argv[])
           initClient(clazz);
 
           Log::trace("MinecraftClient", "Collecting client as 0x%x", clazz);
+          if (!isModern)
+                      minecraftClient->font = client->getFont();
         },
         true, clientInitBackup);
+  }
+  auto clientInstanceInitSym = hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
+
+  if (clientInstanceInitSym)
+  {
+    Log::info("Launcher", "Patching CI Instance");
+
+    clientInstance = (unsigned char *)clientInstanceInitSym;
+
+    PatchUtils::patchCallInstruction(
+        clientInstanceInitSym,
+        (void *)+[](void *clazz)
+        {
+          auto instance = static_cast<ClientInstance *>(clazz);
+          minecraftClient->font = instance->getFont();
+
+          memcpy(&clientInstance[0], clientInstanceBackup, sizeof(int) + 1);
+
+          auto init = (void (*)(void *))(clientInstance);
+          init(clazz);
+
+
+          Log::trace("MinecraftClient", "Collecting client instance as 0x%x", clazz);
+        },
+        true, clientInstanceBackup);
   }
 
   ModLoader modLoader;
   modLoader.loadModsFromDirectory(PathHelper::getPrimaryDataDirectory() +
                                   "mods/");
-  MinecraftUtils::initSymbolBindings(handle);
+
   HbuiPatch::install(handle);
   ANativeActivity activity;
   memset(&activity, 0, sizeof(ANativeActivity));

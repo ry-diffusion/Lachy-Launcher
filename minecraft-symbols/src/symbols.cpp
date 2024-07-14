@@ -1,5 +1,5 @@
 // This file was automatically generated using tools/process_headers.py
-// Generated on Sun Jul 14 2024 13:37:34 UTC
+// Generated on Sun Jul 14 2024 20:48:19 UTC
 
 #include <hybris/dlfcn.h>
 #include <log.h>
@@ -109,6 +109,10 @@ static void (ClientInstance::*_ClientInstance__syncDestroyGame)();
 void ClientInstance::_syncDestroyGame() {
     (this->*_ClientInstance__syncDestroyGame)();
 }
+static Font * (ClientInstance::*_ClientInstance_getFont)() const;
+Font * ClientInstance::getFont() const {
+    return (this->*_ClientInstance_getFont)();
+}
 
 #include <minecraft/Color.h>
 
@@ -208,6 +212,10 @@ static void (Font::*_Font_drawShadow)(mcpe::string &, float, float, Color &);
 void Font::drawShadow(mcpe::string & p1, float p2, float p3, Color & p4) {
     (this->*_Font_drawShadow)(p1, p2, p3, p4);
 }
+static void (Font::*_Font_drawTransformed)(mcpe::string &, float, float, Color const &, float, float, bool, float);
+void Font::drawTransformed(mcpe::string & p1, float p2, float p3, Color const & p4, float p5, float p6, bool p7, float p8) {
+    (this->*_Font_drawTransformed)(p1, p2, p3, p4, p5, p6, p7, p8);
+}
 
 #include <minecraft/GameControllerManager.h>
 GameControllerManager * GameControllerManager::sGamePadManager;
@@ -231,6 +239,8 @@ static void (GameControllerManager::*_GameControllerManager_feedJoinGame)(int, b
 void GameControllerManager::feedJoinGame(int p1, bool p2) {
     (this->*_GameControllerManager_feedJoinGame)(p1, p2);
 }
+
+#include <minecraft/GenericMinecraft.h>
 
 #include <minecraft/I18n.h>
 static void (ResourceLoadManager::*_ResourceLoadManager_ResourceLoadManager)();
@@ -333,14 +343,6 @@ void MinecraftEventing::init() {
 }
 
 #include <minecraft/MinecraftGame.h>
-static void (MinecraftGame::*_MinecraftGame_MinecraftGame)(int, char * *);
-MinecraftGame::MinecraftGame(int p1, char * * p2) {
-    (this->*_MinecraftGame_MinecraftGame)(p1, p2);
-}
-static void (MinecraftGame::*_MinecraftGame_destructor)();
-MinecraftGame::~MinecraftGame() {
-    (this->*_MinecraftGame_destructor)();
-}
 static bool (MinecraftGame::*_MinecraftGame_isInGame)() const;
 bool MinecraftGame::isInGame() const {
     return (this->*_MinecraftGame_isInGame)();
@@ -372,6 +374,14 @@ void MinecraftGame::continueLeaveGame() {
 static void (MinecraftGame::*_MinecraftGame_setTextboxText)(mcpe::string const &, int);
 void MinecraftGame::setTextboxText(mcpe::string const & p1, int p2) {
     (this->*_MinecraftGame_setTextboxText)(p1, p2);
+}
+static void (MinecraftGame::*_MinecraftGame_setRenderingSize)(int, int);
+void MinecraftGame::setRenderingSize(int p1, int p2) {
+    (this->*_MinecraftGame_setRenderingSize)(p1, p2);
+}
+static void (MinecraftGame::*_MinecraftGame_setUISizeAndScale)(int, int, float);
+void MinecraftGame::setUISizeAndScale(int p1, int p2, float p3) {
+    (this->*_MinecraftGame_setUISizeAndScale)(p1, p2, p3);
 }
 
 #include <minecraft/MinecraftScreenModel.h>
@@ -1002,6 +1012,7 @@ void minecraft_symbols_init(void* handle) {
     ((void*&) _ClientInstance_getUser) = minecraft_dlsym(handle, "_ZN14ClientInstance7getUserEv");
     ((void*&) _ClientInstance__startLeaveGame) = minecraft_dlsym(handle, "_ZN14ClientInstance15_startLeaveGameEv");
     ((void*&) _ClientInstance__syncDestroyGame) = minecraft_dlsym(handle, "_ZN14ClientInstance16_syncDestroyGameEv");
+    ((void*&) _ClientInstance_getFont) = minecraft_dlsym(handle, "_ZNK14ClientInstance7getFontEv");
     ((void*&) _CommandOutput_getMessages) = minecraft_dlsym(handle, "_ZNK13CommandOutput11getMessagesEv");
     ((void*&) _CommandOutputSender_translate) = minecraft_dlsym(handle, "_ZN19CommandOutputSender9translateERKSt6vectorISsSaISsEE");
     ((void*&) _CommandOutputSender_CommandOutputSender) = minecraft_dlsym(handle, "_ZN19CommandOutputSenderC2ERN10Automation16AutomationClientE");
@@ -1022,6 +1033,7 @@ void minecraft_symbols_init(void* handle) {
     ((void*&) _Core_FilePathManager_setSettingsPath) = minecraft_dlsym(handle, "_ZN4Core15FilePathManager15setSettingsPathERKNS_4PathE");
     ((void*&) _Core_FilePathManager_getSettingsPath) = minecraft_dlsym(handle, "_ZNK4Core15FilePathManager15getSettingsPathEv");
     ((void*&) _Font_drawShadow) = minecraft_dlsym(handle, "_ZN4Font10drawShadowERKSsffRK5Colorb");
+    ((void*&) _Font_drawTransformed) = minecraft_dlsym(handle, "_ZN4Font15drawTransformedERKSsffRK5Colorffbf");
     ((void*&) GameControllerManager::sGamePadManager) = minecraft_dlsym(handle, "_ZN21GameControllerManager15sGamePadManagerE");
     ((void*&) _GameControllerManager_setGameControllerConnected) = minecraft_dlsym(handle, "_ZN21GameControllerManager26setGameControllerConnectedEib");
     ((void*&) _GameControllerManager_feedButton) = minecraft_dlsym(handle, "_ZN21GameControllerManager10feedButtonEii25GameControllerButtonStateb");
@@ -1051,8 +1063,6 @@ void minecraft_symbols_init(void* handle) {
     ((void*&) _MinecraftCommands_requestCommandExecution) = minecraft_dlsym(handle, "_ZNK17MinecraftCommands23requestCommandExecutionESt10unique_ptrI13CommandOriginSt14default_deleteIS1_EERKSsib");
     ((void*&) _MinecraftEventing_MinecraftEventing) = minecraft_dlsym(handle, "_ZN17MinecraftEventingC2ERKSs");
     ((void*&) _MinecraftEventing_init) = minecraft_dlsym(handle, "_ZN17MinecraftEventing4initEv");
-    ((void*&) _MinecraftGame_MinecraftGame) = minecraft_dlsym(handle, "_ZN13MinecraftGameC2EiPPc");
-    ((void*&) _MinecraftGame_destructor) = minecraft_dlsym(handle, "_ZN13MinecraftGameD2Ev");
     ((void*&) _MinecraftGame_isInGame) = minecraft_dlsym(handle, "_ZNK13MinecraftGame8isInGameEv");
     ((void*&) _MinecraftGame_requestLeaveGame) = minecraft_dlsym(handle, "_ZN13MinecraftGame16requestLeaveGameEbb");
     ((void*&) _MinecraftGame_doPrimaryClientReadyWork) = minecraft_dlsym(handle, "_ZN13MinecraftGame24doPrimaryClientReadyWorkESt8functionIFvvEE");
@@ -1061,6 +1071,8 @@ void minecraft_symbols_init(void* handle) {
     ((void*&) _MinecraftGame_startLeaveGame) = minecraft_dlsym(handle, "_ZN13MinecraftGame14startLeaveGameEv");
     ((void*&) _MinecraftGame_continueLeaveGame) = minecraft_dlsym(handle, "_ZN13MinecraftGame17continueLeaveGameEv");
     ((void*&) _MinecraftGame_setTextboxText) = minecraft_dlsym(handle, "_ZN13MinecraftGame14setTextboxTextERKSsi");
+    ((void*&) _MinecraftGame_setRenderingSize) = minecraft_dlsym(handle, "_ZN13MinecraftGame16setRenderingSizeEii");
+    ((void*&) _MinecraftGame_setUISizeAndScale) = minecraft_dlsym(handle, "_ZN13MinecraftGame17setUISizeAndScaleEiif");
     ((void*&) _MinecraftScreenModel_navigateToXblConsoleSignInScreen) = minecraft_dlsym(handle, "");
     ((void*&) _MinecraftScreenModel_navigateToXblConsoleSignInSucceededScreen) = minecraft_dlsym(handle, "");
     ((void*&) _MinecraftScreenModel_leaveScreen) = minecraft_dlsym(handle, "_ZN20MinecraftScreenModel11leaveScreenEv");

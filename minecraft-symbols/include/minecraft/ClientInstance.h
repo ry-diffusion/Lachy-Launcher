@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "Font.h"
+
 namespace Social
 {
   class User;
@@ -15,4 +17,7 @@ class ClientInstance
   void _startLeaveGame();
 
   void _syncDestroyGame();
+
+    /// @symbol _ZNK14ClientInstance7getFontEv
+  Font* getFont() const;
 };

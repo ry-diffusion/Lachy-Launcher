@@ -5,6 +5,7 @@
 #include <jni.h>
 #include <mcpelauncher/minecraft_version.h>
 #include <minecraft/GameControllerManager.h>
+#include <minecraft/GenericMinecraft.h>
 #include <minecraft/Keyboard.h>
 #include <minecraft/Mouse.h>
 #include <minecraft/Multitouch.h>
@@ -331,7 +332,11 @@ void WindowCallbacks::onGUIFrame() const
     measureMemoryUsage(rss, virt);
     std::stringstream ss;
 
-    ss << "Lachy - DEBUG SCREEN (PRESS F3 TO QUIT AND F9 TO TOGGLE VSYNC)"
+    ss << "Lachy - Minecraft " << *SharedConstants::MajorVersion << "."
+       << *SharedConstants::MinorVersion << "."
+       << *SharedConstants::PatchVersion;
+    ss << " (PRESS F3 TO QUIT AND F9 TO TOGGLE VSYNC)"
+
        << std::endl;
     ss << "FPS: " << window.fps << std::endl;
     ss << "VSync: " << (enableVSync ? "enabled" : "disabled") << std::endl;
@@ -339,8 +344,8 @@ void WindowCallbacks::onGUIFrame() const
        << "MB" << std::endl;
 
     const auto windowManager = GameWindowManager::getManager();
-    const auto glGetString =
-        reinterpret_cast<const char *(*)(int)>(windowManager->getProcAddrFunc()("glGetString"));
+    const auto glGetString = reinterpret_cast<const char *(*)(int)>(
+        windowManager->getProcAddrFunc()("glGetString"));
 
     ss << "Renderer: " << glGetString(0x1F01) << " (" << glGetString(0x1F00)
        << ")" << std::endl;
@@ -350,7 +355,7 @@ void WindowCallbacks::onGUIFrame() const
     auto text = mcpe::string(ss.str());
     const auto font = mc->getFont();
 
-    font->drawShadow(text, 0, 0, white);
+    font->drawTransformed(text, 0.0f, 0.0f, white, 0.0f, 100.0f, false, 7.0f);
     Screen::tick();
   }
 }

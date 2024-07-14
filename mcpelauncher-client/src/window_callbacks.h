@@ -8,6 +8,7 @@
 #include "minecraft/MinecraftClient.h"
 #include "native_activity.h"
 
+class GenericMinecraft;
 class MinecraftGameWrapper;
 class ClientAppPlatform;
 
@@ -32,7 +33,7 @@ class WindowCallbacks
   bool enableVSync = true;
 
  public:
-  MinecraftClient **client;
+  GenericMinecraft**client;
   void *handle = 0;
   jnivm::VM *vm = 0;
   WindowCallbacks(GameWindow &window, ANativeActivity &activity)
