@@ -5,6 +5,7 @@ Esse launcher tem o foco em especificamente melhorar o suporte da versão 0.15.1
 
 ** Features
  - [x] Win10 UI
+ - [ ] A F3 Menu
  - [x] Resize Window
  - [x] Native wayland client
 
