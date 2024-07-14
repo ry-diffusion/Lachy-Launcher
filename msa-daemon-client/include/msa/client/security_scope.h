@@ -2,17 +2,21 @@
 
 #include <string>
 
-namespace msa {
-namespace client {
+namespace msa
+{
+  namespace client
+  {
 
-struct SecurityScope {
-    std::string address;
-    std::string policyRef;
+    struct SecurityScope
+    {
+      std::string address;
+      std::string policyRef;
 
-    bool operator==(SecurityScope const& s) const {
+      bool operator==(SecurityScope const& s) const
+      {
         return address == s.address && policyRef == s.policyRef;
-    }
-};
+      }
+    };
 
-}
-}
+  }  // namespace client
+}  // namespace msa

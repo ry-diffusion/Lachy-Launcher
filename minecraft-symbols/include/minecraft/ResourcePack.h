@@ -1,96 +1,97 @@
 #pragma once
 
-#include "std/string.h"
-#include "std/function.h"
 #include <unordered_map>
+
+#include "Core.h"
 #include "Resource.h"
 #include "UUID.h"
-#include "Core.h"
+#include "std/function.h"
+#include "std/string.h"
 class IMinecraftEventing;
 class IPackTelemetry;
-namespace Core { class FilePathManager; }
+namespace Core
+{
+  class FilePathManager;
+}
 class Options;
 class ResourcePack;
 class ResourcePackStack;
 enum class ResourcePackStackType;
 
-class IContentAccessibilityProvider {
-    //
+class IContentAccessibilityProvider
+{
+  //
 };
-class IContentKeyProvider {
-    //
-};
-
-class SkinPackKeyProvider : public IContentAccessibilityProvider, public IContentKeyProvider {
-
-public:
-
-    int filler;
-
-    SkinPackKeyProvider();
-
-
+class IContentKeyProvider
+{
+  //
 };
 
-class PackManifestFactory {
+class SkinPackKeyProvider :
+    public IContentAccessibilityProvider,
+    public IContentKeyProvider
+{
+ public:
+  int filler;
 
-public:
-
-    char filler[4];
-
-    PackManifestFactory(IPackTelemetry&);
-
+  SkinPackKeyProvider();
 };
 
-class PackSourceFactory {
+class PackManifestFactory
+{
+ public:
+  char filler[4];
 
-public:
-
-    char filler[0x100];
-
-    PackSourceFactory();
-
+  PackManifestFactory(IPackTelemetry&);
 };
 
-class ResourcePackRepository {
+class PackSourceFactory
+{
+ public:
+  char filler[0x100];
 
-public:
-
-    char filler[0x2C];
-    ResourcePack* vanillaPack;
-    char filler2[0x100];
-
-    /// @symbol _ZN22ResourcePackRepositoryC2ER18IMinecraftEventingR19PackManifestFactoryR29IContentAccessibilityProviderPN4Core15FilePathManagerER17PackSourceFactoryb
-    ResourcePackRepository(IMinecraftEventing&, PackManifestFactory&, IContentAccessibilityProvider&, Core::FilePathManager*, PackSourceFactory&, bool);
-
-    /// @symbol _ZN22ResourcePackRepository21addWorldResourcePacksERKN4Core4PathE
-    void addWorldResourcePacks(Legacy::Pre_1_13::Core::Path const&);
-
-    void refreshPacks();
-
+  PackSourceFactory();
 };
 
-struct ContentTierManager {
+class ResourcePackRepository
+{
+ public:
+  char filler[0x2C];
+  ResourcePack* vanillaPack;
+  char filler2[0x100];
 
-public:
+  /// @symbol
+  /// _ZN22ResourcePackRepositoryC2ER18IMinecraftEventingR19PackManifestFactoryR29IContentAccessibilityProviderPN4Core15FilePathManagerER17PackSourceFactoryb
+  ResourcePackRepository(IMinecraftEventing&, PackManifestFactory&,
+                         IContentAccessibilityProvider&, Core::FilePathManager*,
+                         PackSourceFactory&, bool);
 
-    int filler;
+  /// @symbol _ZN22ResourcePackRepository21addWorldResourcePacksERKN4Core4PathE
+  void addWorldResourcePacks(Legacy::Pre_1_13::Core::Path const&);
 
-    ContentTierManager();
-
+  void refreshPacks();
 };
 
-class ResourcePackManager : public ResourceLoader {
+struct ContentTierManager
+{
+ public:
+  int filler;
 
-public:
+  ContentTierManager();
+};
 
-    char filler[0x100];
+class ResourcePackManager : public ResourceLoader
+{
+ public:
+  char filler[0x100];
 
-    /// @symbol _ZN19ResourcePackManagerC2ESt8functionIFN4Core10PathBufferISsEEvEERK18ContentTierManagerb
-    ResourcePackManager(mcpe::function<Core::PathBuffer ()> const&, ContentTierManager const&, bool);
+  /// @symbol
+  /// _ZN19ResourcePackManagerC2ESt8functionIFN4Core10PathBufferISsEEvEERK18ContentTierManagerb
+  ResourcePackManager(mcpe::function<Core::PathBuffer()> const&,
+                      ContentTierManager const&, bool);
 
-    void setStack(std::unique_ptr<ResourcePackStack>, ResourcePackStackType, bool);
+  void setStack(std::unique_ptr<ResourcePackStack>, ResourcePackStackType,
+                bool);
 
-    void onLanguageChanged();
-
+  void onLanguageChanged();
 };

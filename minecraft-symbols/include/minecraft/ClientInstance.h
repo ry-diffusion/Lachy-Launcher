@@ -2,16 +2,17 @@
 
 #include <memory>
 
-namespace Social { class User; }
+namespace Social
+{
+  class User;
+}
 
-class ClientInstance {
+class ClientInstance
+{
+ public:
+  std::shared_ptr<Social::User> getUser();
 
-public:
-    std::shared_ptr<Social::User> getUser();
+  void _startLeaveGame();
 
-
-    void _startLeaveGame();
-
-    void _syncDestroyGame();
-
+  void _syncDestroyGame();
 };

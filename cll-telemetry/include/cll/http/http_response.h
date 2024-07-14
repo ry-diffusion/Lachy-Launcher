@@ -3,25 +3,26 @@
 #include <string>
 #include <vector>
 
-namespace cll {
-namespace http {
+namespace cll
+{
+  namespace http
+  {
 
-struct HttpResponse {
+    struct HttpResponse
+    {
+      long status;
+      std::vector<std::pair<std::string, std::string>> headers;
+      std::string body;
 
-    long status;
-    std::vector<std::pair<std::string, std::string>> headers;
-    std::string body;
-
-
-    std::string findHeader(std::string const& name) {
-        for (auto const& h : headers) {
-            if (h.first == name)
-                return h.second;
+      std::string findHeader(std::string const& name)
+      {
+        for (auto const& h : headers)
+        {
+          if (h.first == name) return h.second;
         }
         return std::string();
-    }
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace http
+}  // namespace cll

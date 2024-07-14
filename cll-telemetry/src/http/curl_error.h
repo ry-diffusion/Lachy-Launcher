@@ -1,30 +1,35 @@
 #pragma once
 
-#include <string>
-#include <curl/curl.h>
 #include <cll/http/http_error.h>
+#include <curl/curl.h>
 
-namespace cll {
-namespace http {
+#include <string>
 
-class CurlError : public HttpError {
+namespace cll
+{
+  namespace http
+  {
 
-private:
-    CURLcode _code;
+    class CurlError : public HttpError
+    {
+     private:
+      CURLcode _code;
 
-public:
-    CurlError(CURLcode code) : _code(code) {
-    }
+     public:
+      CurlError(CURLcode code) : _code(code)
+      {
+      }
 
-    inline CURLcode code() const {
+      inline CURLcode code() const
+      {
         return _code;
-    }
+      }
 
-    const char* what() const noexcept override {
+      const char* what() const noexcept override
+      {
         return curl_easy_strerror(code());
-    }
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace http
+}  // namespace cll

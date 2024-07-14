@@ -2,15 +2,15 @@
 
 #include <memory>
 
-namespace gamepad {
+namespace gamepad
+{
 
-class JoystickManager;
+  class JoystickManager;
 
-class JoystickManagerFactory {
-
-public:
+  class JoystickManagerFactory
+  {
+   public:
     static std::shared_ptr<JoystickManager> create();
+  };
 
-};
-
-}
+}  // namespace gamepad

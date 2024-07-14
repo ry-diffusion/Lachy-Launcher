@@ -2,10 +2,9 @@
 
 #include "std/string.h"
 
-struct PermissionsFile {
+struct PermissionsFile
+{
+  char filler[0x20];
 
-    char filler[0x20];
-
-    PermissionsFile(mcpe::string const &);
-
+  PermissionsFile(mcpe::string const &);
 };

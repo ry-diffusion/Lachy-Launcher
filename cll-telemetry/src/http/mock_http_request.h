@@ -3,35 +3,46 @@
 #include <cll/http/http_request.h>
 #include <cll/http/mock_http_client.h>
 
-namespace cll {
-namespace http {
+namespace cll
+{
+  namespace http
+  {
 
-class MockHttpClient;
+    class MockHttpClient;
 
-class MockHttpRequest : public HttpRequest {
+    class MockHttpRequest : public HttpRequest
+    {
+     private:
+      MockHttpClient& client;
+      std::string url;
 
-private:
-    MockHttpClient& client;
-    std::string url;
+     public:
+      MockHttpRequest(MockHttpClient& client) : client(client)
+      {
+      }
 
-public:
-    MockHttpRequest(MockHttpClient& client) : client(client) {}
-
-    void setUrl(std::string const& url) override {
+      void setUrl(std::string const& url) override
+      {
         this->url = url;
-    }
+      }
 
-    void setMethod(HttpMethod method) override {}
+      void setMethod(HttpMethod method) override
+      {
+      }
 
-    void setPostData(const char* data, size_t size) override {}
+      void setPostData(const char* data, size_t size) override
+      {
+      }
 
-    void addHeader(std::string const& name, std::string const& value) override {}
+      void addHeader(std::string const& name, std::string const& value) override
+      {
+      }
 
-    HttpResponse send() override  {
+      HttpResponse send() override
+      {
         return client.getMockedResponse(url);
-    }
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace http
+}  // namespace cll

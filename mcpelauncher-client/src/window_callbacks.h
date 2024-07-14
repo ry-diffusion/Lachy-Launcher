@@ -1,17 +1,20 @@
 #pragma once
 
-#include "native_activity.h"
 #include <game_window.h>
 #include <jnivm.h>
+
 #include <unordered_map>
+
+#include "native_activity.h"
 
 class MinecraftGameWrapper;
 class ClientAppPlatform;
 
-class WindowCallbacks {
-
-private:
-  struct GamepadData {
+class WindowCallbacks
+{
+ private:
+  struct GamepadData
+  {
     float stickLeft[2];
     float stickRight[2];
 
@@ -25,16 +28,21 @@ private:
   bool modCTRL = false;
   bool fullscreen = false;
 
-public:
+ public:
   void **MinecraftClient;
   void *handle = 0;
   jnivm::VM *vm = 0;
   WindowCallbacks(GameWindow &window, ANativeActivity &activity)
-      : window(window), activity(activity) {}
+      : window(window), activity(activity)
+  {
+  }
 
   static void loadGamepadMappings();
 
-  void setPixelScale(float pixelScale) { this->pixelScale = pixelScale; }
+  void setPixelScale(float pixelScale)
+  {
+    this->pixelScale = pixelScale;
+  }
 
   void registerCallbacks();
 

@@ -1,32 +1,40 @@
 #pragma once
 
-#include <string>
 #include <nlohmann/json.hpp>
+#include <string>
 
-namespace msa {
-namespace client {
+namespace msa
+{
+  namespace client
+  {
 
-struct BaseAccountInfo {
+    struct BaseAccountInfo
+    {
+     private:
+      std::string username;
+      std::string cid;
 
-private:
+     public:
+      BaseAccountInfo(std::string username, std::string cid)
+          : username(std::move(username)), cid(std::move(cid))
+      {
+      }
 
-    std::string username;
-    std::string cid;
+      std::string const& getUsername() const
+      {
+        return username;
+      }
 
-public:
+      std::string const& getCID() const
+      {
+        return cid;
+      }
 
-    BaseAccountInfo(std::string username, std::string cid) : username(std::move(username)), cid(std::move(cid)) {}
-
-    std::string const& getUsername() const { return username; }
-
-    std::string const& getCID() const { return cid; }
-
-
-    static BaseAccountInfo fromJson(nlohmann::json const& j) {
+      static BaseAccountInfo fromJson(nlohmann::json const& j)
+      {
         return BaseAccountInfo(j["username"], j["cid"]);
-    }
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace client
+}  // namespace msa

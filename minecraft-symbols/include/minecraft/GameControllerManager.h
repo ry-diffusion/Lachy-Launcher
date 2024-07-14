@@ -1,24 +1,24 @@
 #pragma once
 
 enum class GameControllerStickState;
-enum class GameControllerButtonState {
-    RELEASED, PRESSED
+enum class GameControllerButtonState
+{
+  RELEASED,
+  PRESSED
 };
 
-struct GameControllerManager {
+struct GameControllerManager
+{
+ public:
+  static GameControllerManager* sGamePadManager;
 
-public:
+  void setGameControllerConnected(int, bool);
 
-    static GameControllerManager* sGamePadManager;
+  void feedButton(int, int, GameControllerButtonState, bool);
 
-    void setGameControllerConnected(int, bool);
+  void feedStick(int, int, GameControllerStickState, float, float);
 
-    void feedButton(int, int, GameControllerButtonState, bool);
+  void feedTrigger(int, int, float);
 
-    void feedStick(int, int, GameControllerStickState, float, float);
-
-    void feedTrigger(int, int, float);
-
-    void feedJoinGame(int, bool);
-
+  void feedJoinGame(int, bool);
 };

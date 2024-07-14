@@ -1,5 +1,5 @@
-#ifndef	SHIM_SYS_EPOLL_H
-#define	SHIM_SYS_EPOLL_H
+#ifndef SHIM_SYS_EPOLL_H
+#define SHIM_SYS_EPOLL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,9 +32,9 @@ enum EPOLL_EVENTS { __EPOLL_DUMMY };
 #define EPOLLERR 0x008
 #define EPOLLHUP 0x010
 #define EPOLLRDHUP 0x2000
-#define EPOLLWAKEUP (1U<<29)
-#define EPOLLONESHOT (1U<<30)
-#define EPOLLET (1U<<31)
+#define EPOLLWAKEUP (1U << 29)
+#define EPOLLONESHOT (1U << 30)
+#define EPOLLET (1U << 31)
 
 #define EPOLL_CTL_ADD 1
 #define EPOLL_CTL_DEL 2
@@ -65,7 +65,6 @@ int epoll_wait(
 #if 0
 int epoll_pwait(int, struct epoll_event *, int, int, const sigset_t *);
 #endif
-
 
 #ifdef __cplusplus
 }

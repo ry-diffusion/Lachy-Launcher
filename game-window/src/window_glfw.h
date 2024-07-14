@@ -3,9 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <game_window.h>
 
-class GLFWGameWindow : public GameWindow {
-
-private:
+class GLFWGameWindow : public GameWindow
+{
+ private:
   double lastTime;
   int numFrames;
   GLFWwindow *window;
@@ -32,7 +32,7 @@ private:
   static void _glfwWindowContentScaleCallback(GLFWwindow *window, float scalex,
                                               float scaley);
 
-public:
+ public:
   GLFWGameWindow(const std::string &title, int width, int height,
                  GraphicsApi api);
 

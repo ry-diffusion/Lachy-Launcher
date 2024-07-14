@@ -1,26 +1,29 @@
 #pragma once
 
-#include "std/string.h"
 #include <cstdlib>
 
-namespace Core {
+#include "std/string.h"
 
-struct Path {
+namespace Core
+{
 
+  struct Path
+  {
     const char* path;
     bool hasSize;
     size_t size;
+  };
 
-};
-
-struct PathBuffer {
+  struct PathBuffer
+  {
     mcpe::string path;
     size_t size;
 
-    PathBuffer(const mcpe::string & str) {
-        path = str;
-        size = str.length();
+    PathBuffer(const mcpe::string& str)
+    {
+      path = str;
+      size = str.length();
     }
-};
+  };
 
-}
+}  // namespace Core

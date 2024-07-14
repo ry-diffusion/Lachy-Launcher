@@ -1,9 +1,5 @@
-#include "hbui_patch.h"
-#include "window_callbacks.h"
-#include "xbox_live_helper.h"
 #include <argparser.h>
 #include <dlfcn.h>
-#include <functional>
 #include <game_window_manager.h>
 #include <hybris/dlfcn.h>
 #include <hybris/hook.h>
@@ -17,27 +13,33 @@
 #include <minecraft/ClientInstance.h>
 #include <minecraft/Common.h>
 #include <minecraft/MinecraftGame.h>
+
+#include <functional>
+
+#include "hbui_patch.h"
+#include "window_callbacks.h"
+#include "xbox_live_helper.h"
 #ifdef USE_ARMHF_SUPPORT
 #include "armhf_support.h"
 #endif
 #ifdef __i386__
 #include "cpuid.h"
 #endif
-#include "JNIBinding.h"
-#include "OpenSLESPatch.h"
-
-#include "native_activity.h"
-
 #include <build_info.h>
 #include <dirent.h>
-#include <fstream>
 #include <hybris/hook.h>
 #include <jnivm.h>
 #include <signal.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <unistd.h>
-static char clientInitBackup[5] = {0};
+
+#include <fstream>
+
+#include "JNIBinding.h"
+#include "OpenSLESPatch.h"
+#include "native_activity.h"
+static char clientInitBackup[5] = { 0 };
 unsigned char *clientInit;
 void *minecraftClient = nullptr;
 
@@ -58,20 +60,36 @@ JNIEnv *jnienv = 0;
 
 void printVersionInfo();
 
-mcpe::string getEdition() { return "win10"; }
+mcpe::string getEdition()
+{
+  return "win10";
+}
 
-int getPlatformUIScalingRules() { return 0; }
+int getPlatformUIScalingRules()
+{
+  return 0;
+}
 
-int getScreenType() { return 0; }
+int getScreenType()
+{
+  return 0;
+}
 
-int getPlatformType() { return 0; }
+int getPlatformType()
+{
+  return 0;
+}
 
-bool useCenteredGUI() { return true; }
+bool useCenteredGUI()
+{
+  return true;
+}
 
 /**
  * Thanks for D4yvid and BlockLauncher
  */
-void patchDesktopUi(PatchUtils::VtableReplaceHelper vtr) {
+void patchDesktopUi(PatchUtils::VtableReplaceHelper vtr)
+{
   Log::info("DesktopUI", "Using Windows 10 Edition UI...");
 
   vtr.replace("_ZNK11AppPlatform15getPlatformTypeEv", &getPlatformType);
@@ -83,7 +101,8 @@ void patchDesktopUi(PatchUtils::VtableReplaceHelper vtr) {
 }
 
 #ifdef JNI_DEBUG
-void dump() {
+void dump()
+{
   std::ofstream os("../binding.cpp");
   os << jnivm::GeneratePreDeclaration(jnienv);
   os << jnivm::GenerateHeader(jnienv);
@@ -93,49 +112,58 @@ void dump() {
 #endif
 
 #ifdef __arm__
-namespace FMOD {
-struct ChannelControl {
-  int setVolume(float);
-  int setPitch(float);
-  int addFadePoint(unsigned long long, float);
-};
-struct Sound {
-  int set3DMinMaxDistance(float, float);
-};
-struct System {
-  int set3DSettings(float, float, float);
-};
-} // namespace FMOD
+namespace FMOD
+{
+  struct ChannelControl
+  {
+    int setVolume(float);
+    int setPitch(float);
+    int addFadePoint(unsigned long long, float);
+  };
+  struct Sound
+  {
+    int set3DMinMaxDistance(float, float);
+  };
+  struct System
+  {
+    int set3DSettings(float, float, float);
+  };
+}  // namespace FMOD
 
 // Translate arm softfp to armhf
-int32_t __attribute__((pcs("aapcs")))
-FMOD_ChannelControl_setVolume(FMOD::ChannelControl *ch, float f) {
+int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_setVolume(
+    FMOD::ChannelControl *ch, float f)
+{
   return ch->setVolume(f);
 }
 
-int32_t __attribute__((pcs("aapcs")))
-FMOD_ChannelControl_setPitch(FMOD::ChannelControl *ch, float p) {
+int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_setPitch(
+    FMOD::ChannelControl *ch, float p)
+{
   return ch->setPitch(p);
 }
 
-int32_t __attribute__((pcs("aapcs")))
-FMOD_System_set3DSettings(FMOD::System *sys, float x, float y, float z) {
+int32_t __attribute__((pcs("aapcs"))) FMOD_System_set3DSettings(
+    FMOD::System *sys, float x, float y, float z)
+{
   return sys->set3DSettings(x, y, z);
 }
 
-int32_t __attribute__((pcs("aapcs")))
-FMOD_Sound_set3DMinMaxDistance(FMOD::Sound *s, float m, float M) {
+int32_t __attribute__((pcs("aapcs"))) FMOD_Sound_set3DMinMaxDistance(
+    FMOD::Sound *s, float m, float M)
+{
   return s->set3DMinMaxDistance(m, M);
 }
 
-int32_t __attribute__((pcs("aapcs")))
-FMOD_ChannelControl_addFadePoint(FMOD::ChannelControl *ch, unsigned long long i,
-                                 float f) {
+int32_t __attribute__((pcs("aapcs"))) FMOD_ChannelControl_addFadePoint(
+    FMOD::ChannelControl *ch, unsigned long long i, float f)
+{
   return ch->addFadePoint(i, f);
 }
 #endif
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   static auto windowManager = GameWindowManager::getManager();
   CrashHandler::registerCrashHandler();
   MinecraftUtils::workaroundLocaleBug();
@@ -157,20 +185,16 @@ int main(int argc, char *argv[]) {
                                   "memory, this may help workaround MCPE bugs");
   argparser::arg<bool> disableFmod(p, "--disable-fmod", "-df",
                                    "Disables usage of the FMod audio library");
-  if (!p.parse(argc, (const char **)argv))
-    return 1;
-  if (printVersion) {
+  if (!p.parse(argc, (const char **)argv)) return 1;
+  if (printVersion)
+  {
     printVersionInfo();
     return 0;
   }
-  if (!gameDir.get().empty())
-    PathHelper::setGameDir(gameDir);
-  if (!dataDir.get().empty())
-    PathHelper::setDataDir(dataDir);
-  if (!cacheDir.get().empty())
-    PathHelper::setCacheDir(cacheDir);
-  if (mallocZero)
-    MinecraftUtils::setMallocZero();
+  if (!gameDir.get().empty()) PathHelper::setGameDir(gameDir);
+  if (!dataDir.get().empty()) PathHelper::setDataDir(dataDir);
+  if (!cacheDir.get().empty()) PathHelper::setCacheDir(cacheDir);
+  if (mallocZero) MinecraftUtils::setMallocZero();
 
   Log::info("Launcher", "Version: client %s / manifest %s",
             CLIENT_GIT_COMMIT_HASH, MANIFEST_GIT_COMMIT_HASH);
@@ -187,7 +211,8 @@ int main(int argc, char *argv[]) {
   GraphicsApi graphicsApi = GraphicsApi::OPENGL_ES2;
 
   Log::trace("Launcher", "Loading hybris libraries");
-  if (!disableFmod) {
+  if (!disableFmod)
+  {
     MinecraftUtils::loadFMod();
 #ifdef __arm__
     hybris_hook("_ZN4FMOD14ChannelControl9setVolumeEf",
@@ -201,7 +226,8 @@ int main(int argc, char *argv[]) {
     hybris_hook("_ZN4FMOD14ChannelControl12addFadePointEyf",
                 (void *)&FMOD_ChannelControl_addFadePoint);
 #endif
-  } else
+  }
+  else
     MinecraftUtils::stubFMod();
   // Get rid of defining OPENSSL_armcap
   hybris_hook("OPENSSL_cpuid_setup", (void *)+[]() -> void {});
@@ -215,28 +241,33 @@ int main(int argc, char *argv[]) {
   window->setIcon(PathHelper::getIconPath());
   window->show();
   hybris_hook(
-      "ANativeActivity_finish", (void *)+[](ANativeActivity *activity) {
+      "ANativeActivity_finish",
+      (void *)+[](ANativeActivity *activity)
+      {
         Log::warn("Launcher", "Android stub %s called",
                   "ANativeActivity_finish");
-        std::thread([=]() {
-          // Saves nothing (returns every time null)
-          // size_t outSize;
-          // void * data = activity->callbacks->onSaveInstanceState(activity,
-          // &outSize);
-          ((void (*)(JNIEnv *env, void *))hybris_dlsym(
-              jnienv->functions->reserved3,
-              "Java_com_mojang_minecraftpe_MainActivity_nativeUnregisterThis"))(
-              jnienv, nullptr);
-          ((void (*)(JNIEnv *env, void *))hybris_dlsym(
-              jnienv->functions->reserved3,
-              "Java_com_mojang_minecraftpe_MainActivity_nativeSuspend"))(
-              jnienv, nullptr);
-          ((void (*)(JNIEnv *env, void *))hybris_dlsym(
-              jnienv->functions->reserved3,
-              "Java_com_mojang_minecraftpe_MainActivity_nativeShutdown"))(
-              jnienv, nullptr);
-          activity->callbacks->onStop(activity);
-        }).detach();
+        std::thread(
+            [=]()
+            {
+              // Saves nothing (returns every time null)
+              // size_t outSize;
+              // void * data =
+              // activity->callbacks->onSaveInstanceState(activity, &outSize);
+              ((void (*)(JNIEnv *env, void *))hybris_dlsym(
+                  jnienv->functions->reserved3,
+                  "Java_com_mojang_minecraftpe_MainActivity_"
+                  "nativeUnregisterThis"))(jnienv, nullptr);
+              ((void (*)(JNIEnv *env, void *))hybris_dlsym(
+                  jnienv->functions->reserved3,
+                  "Java_com_mojang_minecraftpe_MainActivity_nativeSuspend"))(
+                  jnienv, nullptr);
+              ((void (*)(JNIEnv *env, void *))hybris_dlsym(
+                  jnienv->functions->reserved3,
+                  "Java_com_mojang_minecraftpe_MainActivity_nativeShutdown"))(
+                  jnienv, nullptr);
+              activity->callbacks->onStop(activity);
+            })
+            .detach();
         // With Xboxlive it usually don't close the Game with the main function
         // correctly Force exit with code 0 (Maybe Android related)
         _Exit(0);
@@ -244,35 +275,51 @@ int main(int argc, char *argv[]) {
   hybris_hook(
       "eglChooseConfig",
       (void *)+[](EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs,
-                  EGLint config_size, EGLint *num_config) {
+                  EGLint config_size, EGLint *num_config)
+      {
         *num_config = 1;
         return EGL_TRUE;
       });
   hybris_hook("eglGetError", (void *)(void (*)())[](){});
   hybris_hook(
       "eglGetCurrentDisplay",
-      (void *)+[]() -> EGLDisplay { return (EGLDisplay)1; });
+      (void *)+[]() -> EGLDisplay
+      {
+        return (EGLDisplay)1;
+      });
   hybris_hook(
       "eglCreateWindowSurface",
       (void *)+[](EGLDisplay display, EGLConfig config,
-                  NativeWindowType native_window,
-                  EGLint const *attrib_list) { return native_window; });
+                  NativeWindowType native_window, EGLint const *attrib_list)
+      {
+        return native_window;
+      });
   hybris_hook(
       "eglGetConfigAttrib",
       (void *)+[](EGLDisplay display, EGLConfig config, EGLint attribute,
-                  EGLint *value) { return EGL_TRUE; });
+                  EGLint *value)
+      {
+        return EGL_TRUE;
+      });
   hybris_hook(
-      "eglCreateContext", (void *)+[](EGLDisplay display, EGLConfig config,
-                                      EGLContext share_context,
-                                      EGLint const *attrib_list) { return 1; });
+      "eglCreateContext",
+      (void *)+[](EGLDisplay display, EGLConfig config,
+                  EGLContext share_context, EGLint const *attrib_list)
+      {
+        return 1;
+      });
   hybris_hook("eglDestroySurface", (void *)(void (*)())[](){});
   hybris_hook(
-      "eglSwapBuffers", (void *)+[](EGLDisplay *display, EGLSurface surface) {
+      "eglSwapBuffers",
+      (void *)+[](EGLDisplay *display, EGLSurface surface)
+      {
         window->swapBuffers();
       });
   hybris_hook(
-      "eglMakeCurrent", (void *)+[](EGLDisplay display, EGLSurface draw,
-                                    EGLSurface read, EGLContext context) {
+      "eglMakeCurrent",
+      (void *)+[](EGLDisplay display, EGLSurface draw, EGLSurface read,
+                  EGLContext context)
+      {
         Log::warn("Launcher", "EGL stub %s called", "eglMakeCurrent");
         return EGL_TRUE;
       });
@@ -280,50 +327,74 @@ int main(int argc, char *argv[]) {
   hybris_hook("eglTerminate", (void *)(void (*)())[](){});
   hybris_hook(
       "eglGetDisplay",
-      (void *)+[](NativeDisplayType native_display) { return 1; });
+      (void *)+[](NativeDisplayType native_display)
+      {
+        return 1;
+      });
   hybris_hook(
-      "eglInitialize", (void *)+[](void *display, uint32_t *major,
-                                   uint32_t *minor) { return EGL_TRUE; });
+      "eglInitialize",
+      (void *)+[](void *display, uint32_t *major, uint32_t *minor)
+      {
+        return EGL_TRUE;
+      });
   hybris_hook(
-      "eglQuerySurface", (void *)+[](void *dpy, EGLSurface surface,
-                                     EGLint attribute, EGLint *value) {
+      "eglQuerySurface",
+      (void *)+[](void *dpy, EGLSurface surface, EGLint attribute,
+                  EGLint *value)
+      {
         int dummy;
-        switch (attribute) {
-        case EGL_WIDTH:
-          window->getWindowSize(*value, dummy);
-          break;
-        case EGL_HEIGHT:
-          window->getWindowSize(dummy, *value);
-          break;
-        default:
-          return EGL_FALSE;
+        switch (attribute)
+        {
+          case EGL_WIDTH:
+            window->getWindowSize(*value, dummy);
+            break;
+          case EGL_HEIGHT:
+            window->getWindowSize(dummy, *value);
+            break;
+          default:
+            return EGL_FALSE;
         }
         return EGL_TRUE;
       });
   hybris_hook(
-      "eglSwapInterval", (void *)+[](EGLDisplay display, EGLint interval) {
+      "eglSwapInterval",
+      (void *)+[](EGLDisplay display, EGLint interval)
+      {
         window->swapInterval(interval);
         return EGL_TRUE;
       });
   hybris_hook(
-      "eglQueryString", (void *)+[](void *display, int32_t name) { return 0; });
+      "eglQueryString",
+      (void *)+[](void *display, int32_t name)
+      {
+        return 0;
+      });
   hybris_hook(
-      "eglGetProcAddress", (void *)+[](char *ch) -> void * {
+      "eglGetProcAddress",
+      (void *)+[](char *ch) -> void *
+      {
         static std::map<std::string, void *> eglfuncs = {
-            {"glInvalidateFramebuffer", (void *)+[]() {}}};
+          { "glInvalidateFramebuffer", (void *)+[]() {} }
+        };
         auto hook = eglfuncs[ch];
         return hook ? hook
                     : ((void *(*)(const char *))
                            windowManager->getProcAddrFunc())(ch);
       });
-  hybris_hook("eglGetCurrentContext", (void *)+[]() -> int { return 0; });
+  hybris_hook(
+      "eglGetCurrentContext",
+      (void *)+[]() -> int
+      {
+        return 0;
+      });
   MinecraftUtils::setupGLES2Symbols(
       (void *(*)(const char *))windowManager->getProcAddrFunc());
 #ifdef USE_ARMHF_SUPPORT
   ArmhfSupport::install();
 #endif
 
-  struct Looper {
+  struct Looper
+  {
     int fd;
     int indent;
     void *data;
@@ -332,8 +403,9 @@ int main(int argc, char *argv[]) {
   };
   static Looper looper;
   hybris_hook(
-      "ALooper_pollAll", (void *)+[](int timeoutMillis, int *outFd,
-                                     int *outEvents, void **outData) {
+      "ALooper_pollAll",
+      (void *)+[](int timeoutMillis, int *outFd, int *outEvents, void **outData)
+      {
         fd_set rfds;
         struct timeval tv;
         int retval;
@@ -351,7 +423,8 @@ int main(int argc, char *argv[]) {
 
         if (retval == -1)
           perror("select()");
-        else if (retval) {
+        else if (retval)
+        {
           // printf("Data is available now.\n");
           *outData = looper.data;
           return looper.indent;
@@ -365,7 +438,8 @@ int main(int argc, char *argv[]) {
   hybris_hook(
       "ALooper_addFd",
       (void *)+[](void *loopere, int fd, int ident, int events,
-                  int (*callback)(int fd, int events, void *data), void *data) {
+                  int (*callback)(int fd, int events, void *data), void *data)
+      {
         looper.fd = fd;
         looper.indent = ident;
         looper.data = data;
@@ -374,15 +448,22 @@ int main(int argc, char *argv[]) {
   hybris_hook(
       "AInputQueue_attachLooper",
       (void *)+[](void *queue, void *looper2, int ident, void *callback,
-                  void *data) {
+                  void *data)
+      {
         looper.indent2 = ident;
         looper.data2 = data;
       });
 
   // Hook AppPlatform function directly (functions are too small for a jump
   // instruction) static vtable replace isn't working
-  auto hide = (void *)+[](void *t) { window->setCursorDisabled(true); };
-  auto show = (void *)+[](void *t) { window->setCursorDisabled(false); };
+  auto hide = (void *)+[](void *t)
+  {
+    window->setCursorDisabled(true);
+  };
+  auto show = (void *)+[](void *t)
+  {
+    window->setCursorDisabled(false);
+  };
 
   hybris_hook("uncompress", (void *)(void (*)())[](){});
 
@@ -403,10 +484,14 @@ int main(int argc, char *argv[]) {
   hybris_hook(
       "pthread_create",
       (void *)+[](pthread_t *thread, const pthread_attr_t *__attr,
-                  void *(*start_routine)(void *), void *arg) {
-        if (uithread_started.load()) {
+                  void *(*start_routine)(void *), void *arg)
+      {
+        if (uithread_started.load())
+        {
           return my_pthread_create(thread, __attr, start_routine, arg);
-        } else {
+        }
+        else
+        {
           uithread_started = true;
           *thread = mainthread;
           main_routine = start_routine;
@@ -419,13 +504,19 @@ int main(int argc, char *argv[]) {
       (void *(*)(const char *filename, const char *mode))get_hooked_symbol(
           "fopen");
   hybris_hook(
-      "fopen", (void *)+[](const char *filename, const char *mode) {
-        if (!strcmp(filename, "/data/data/com.mojang.minecraftpe/games/"
-                              "com.mojang/minecraftpe/external_servers.txt")) {
+      "fopen",
+      (void *)+[](const char *filename, const char *mode)
+      {
+        if (!strcmp(filename,
+                    "/data/data/com.mojang.minecraftpe/games/"
+                    "com.mojang/minecraftpe/external_servers.txt"))
+        {
           return my_fopen(
               (PathHelper::getPrimaryDataDirectory() + (filename + 34)).data(),
               mode);
-        } else {
+        }
+        else
+        {
           return my_fopen(filename, mode);
         }
       });
@@ -437,7 +528,8 @@ int main(int argc, char *argv[]) {
   struct sigaction act;
   sigemptyset(&act.sa_mask);
   act.sa_flags = SA_SIGINFO | SA_RESTART;
-  act.sa_sigaction = [](int, siginfo_t *si, void *ptr) {
+  act.sa_sigaction = [](int, siginfo_t *si, void *ptr)
+  {
     *(char *)si->si_addr = 0x90;
     *((char *)si->si_addr + 1) = 0x90;
     Log::warn("Minecraft BUG",
@@ -448,7 +540,8 @@ int main(int argc, char *argv[]) {
 
   Log::trace("Launcher", "Loading Minecraft library");
   void *handle = MinecraftUtils::loadMinecraftLib();
-  if (!handle) {
+  if (!handle)
+  {
     Log::error("Launcher",
                "Failed to load Minecraft library, please reinstall");
     return 51;
@@ -468,13 +561,16 @@ int main(int argc, char *argv[]) {
   vtr.replace("_ZN11AppPlatform16showMousePointerEv", show);
   patchDesktopUi(vtr);
 
-  auto client = hybris_dlsym(
-      handle, "_ZN3web4http6client7details35verify_cert_chain_platform_"
-              "specificERN5boost4asio3ssl14verify_contextERKSs");
-  if (client) {
+  auto client =
+      hybris_dlsym(handle,
+                   "_ZN3web4http6client7details35verify_cert_chain_platform_"
+                   "specificERN5boost4asio3ssl14verify_contextERKSs");
+  if (client)
+  {
     PatchUtils::patchCallInstruction(
         client,
-        (void *)+[]() {
+        (void *)+[]()
+        {
           // Log::trace("web::http::client",
           // "verify_cert_chain_platform_specific stub called");
           return true;
@@ -483,12 +579,14 @@ int main(int argc, char *argv[]) {
   }
 
   auto clientInitSym = hybris_dlsym(handle, "_ZN15MinecraftClient4initEv");
-  if (clientInitSym) {
+  if (clientInitSym)
+  {
     clientInit = (unsigned char *)clientInitSym;
 
     PatchUtils::patchCallInstruction(
         clientInitSym,
-        (void *)+[](void *kthis) {
+        (void *)+[](void *kthis)
+        {
           memcpy(&clientInit[0], clientInitBackup, sizeof(int));
           void *origFunc = clientInit;
 
@@ -526,13 +624,13 @@ int main(int argc, char *argv[]) {
   // Initialize fake java interop
   auto JNI_OnLoad =
       (jint(*)(JavaVM * vm, void *reserved)) hybris_dlsym(handle, "JNI_OnLoad");
-  if (JNI_OnLoad)
-    JNI_OnLoad(activity.vm, 0);
+  if (JNI_OnLoad) JNI_OnLoad(activity.vm, 0);
   auto mainactivity = new com::mojang::minecraftpe::MainActivity(handle);
   mainactivity->clazz = (java::lang::Class *)activity.env->FindClass(
-      "com/mojang/minecraftpe/MainActivity"); // new jnivm::Object<void> { .cl =
-                                              // activity.env->FindClass("com/mojang/minecraftpe/MainActivity"),
-                                              // .value = new int() };
+      "com/mojang/minecraftpe/MainActivity");  // new jnivm::Object<void> { .cl
+                                               // =
+                                               // activity.env->FindClass("com/mojang/minecraftpe/MainActivity"),
+                                               // .value = new int() };
   mainactivity->window = window;
   activity.clazz = mainactivity;
   WindowCallbacks windowCallbacks(*window, activity);
@@ -546,10 +644,10 @@ int main(int argc, char *argv[]) {
            handle, "ANativeActivity_onCreate"),
        registerthis = (void (*)(JNIEnv *env, void *))hybris_dlsym(
            jnienv->functions->reserved3,
-           "Java_com_mojang_minecraftpe_MainActivity_nativeRegisterThis")]() {
+           "Java_com_mojang_minecraftpe_MainActivity_nativeRegisterThis")]()
+      {
         ANativeActivity_onCreate(&activity, 0, 0);
-        if (registerthis)
-          registerthis(jnienv, activity.clazz);
+        if (registerthis) registerthis(jnienv, activity.clazz);
         activity.callbacks->onInputQueueCreated(&activity, (AInputQueue *)2);
         activity.callbacks->onNativeWindowCreated(
             &activity, (ANativeWindow *)window.get());
@@ -565,7 +663,8 @@ int main(int argc, char *argv[]) {
   _Exit(0);
 }
 
-void printVersionInfo() {
+void printVersionInfo()
+{
   printf("mcpelauncher-client %s / manifest %s\n", CLIENT_GIT_COMMIT_HASH,
          MANIFEST_GIT_COMMIT_HASH);
 #ifdef __i386__

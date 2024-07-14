@@ -2,20 +2,22 @@
 
 #include "../std/string.h"
 
-namespace Legacy {
-namespace Pre_1_0_4 {
+namespace Legacy
+{
+  namespace Pre_1_0_4
+  {
 
-namespace mce {
+    namespace mce
+    {
 
-class UUID {
+      class UUID
+      {
+       public:
+        /// @symbol _ZNK3mce4UUID8toStringEv
+        mcpe::string toString() const;
+      };
 
-public:
-    /// @symbol _ZNK3mce4UUID8toStringEv
-    mcpe::string toString() const;
+    }  // namespace mce
 
-};
-
-}
-
-}
-}
+  }  // namespace Pre_1_0_4
+}  // namespace Legacy

@@ -1,35 +1,36 @@
 #pragma once
 
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
-namespace simpleipc {
-namespace encoding {
+namespace simpleipc
+{
+  namespace encoding
+  {
 
-class encoding;
+    class encoding;
 
-class encodings {
+    class encodings
+    {
+     private:
+      std::map<std::string, std::unique_ptr<encoding>> encodings_map;
+      encoding* default_encoding;
 
-private:
-    std::map<std::string, std::unique_ptr<encoding>> encodings_map;
-    encoding* default_encoding;
+      static encodings instance;
 
-    static encodings instance;
+      void add_encoding(encoding* enc);
 
-    void add_encoding(encoding* enc);
+     public:
+      encodings();
 
-public:
-    encodings();
+      static encoding* get_encoding_by_name(std::string const& name);
 
-    static encoding* get_encoding_by_name(std::string const& name);
+      static encoding* get_default_encoding();
 
-    static encoding* get_default_encoding();
+      static std::vector<std::string> get_preferred_encodings();
+    };
 
-    static std::vector<std::string> get_preferred_encodings();
-
-};
-
-}
-}
+  }  // namespace encoding
+}  // namespace simpleipc

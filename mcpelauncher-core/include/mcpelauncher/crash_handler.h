@@ -1,13 +1,12 @@
 #pragma once
 
-class CrashHandler {
+class CrashHandler
+{
+ private:
+  static bool hasCrashed;
 
-private:
-    static bool hasCrashed;
+  static void handleSignal(int signal, void* aptr);
 
-    static void handleSignal(int signal, void* aptr);
-
-public:
-    static void registerCrashHandler();
-
+ public:
+  static void registerCrashHandler();
 };

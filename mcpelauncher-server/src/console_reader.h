@@ -2,21 +2,21 @@
 
 #include <string>
 
-class ConsoleReader {
+class ConsoleReader
+{
+ private:
+  static bool interrupted;
 
-private:
-    static bool interrupted;
+  std::string buffer;
+  size_t buffer_bcount = 0;
 
-    std::string buffer;
-    size_t buffer_bcount = 0;
+ public:
+  static void registerInterruptHandler();
 
-public:
-    static void registerInterruptHandler();
+  ConsoleReader()
+  {
+    buffer.resize(4096);
+  }
 
-    ConsoleReader() {
-        buffer.resize(4096);
-    }
-
-    bool read(std::string& res);
-
+  bool read(std::string& res);
 };

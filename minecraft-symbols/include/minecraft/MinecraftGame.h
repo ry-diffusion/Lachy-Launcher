@@ -1,40 +1,43 @@
 #pragma once
 
 #include <memory>
-#include "std/function.h"
+
 #include "App.h"
+#include "std/function.h"
 
 class Options;
 class ClientInstance;
 
-namespace BedrockEngine {
-    struct AppIsland { void* appIsland_vtable; };
-};
-class MinecraftGame : public BedrockEngine::AppIsland, public App {
+namespace BedrockEngine
+{
+  struct AppIsland
+  {
+    void* appIsland_vtable;
+  };
+};  // namespace BedrockEngine
+class MinecraftGame : public BedrockEngine::AppIsland, public App
+{
+ public:
+  char filler[0x4000];
 
-public:
+  MinecraftGame(int carg, char** args);
 
-    char filler [0x4000];
+  ~MinecraftGame();
 
-    MinecraftGame(int carg, char** args);
+  bool isInGame() const;
 
-    ~MinecraftGame();
+  void requestLeaveGame(bool, bool);
 
-    bool isInGame() const;
+  /// @symbol _ZN13MinecraftGame24doPrimaryClientReadyWorkESt8functionIFvvEE
+  void doPrimaryClientReadyWork(mcpe::function<void()>);
 
-    void requestLeaveGame(bool, bool);
+  std::shared_ptr<Options> getPrimaryUserOptions();
 
-    /// @symbol _ZN13MinecraftGame24doPrimaryClientReadyWorkESt8functionIFvvEE
-    void doPrimaryClientReadyWork(mcpe::function<void ()>);
+  ClientInstance* getPrimaryClientInstance();
 
-    std::shared_ptr<Options> getPrimaryUserOptions();
+  void startLeaveGame();
 
-    ClientInstance* getPrimaryClientInstance();
+  void continueLeaveGame();
 
-    void startLeaveGame();
-
-    void continueLeaveGame();
-
-    void setTextboxText(mcpe::string const&, int);
-
+  void setTextboxText(mcpe::string const&, int);
 };

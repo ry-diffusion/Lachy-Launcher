@@ -2,9 +2,8 @@
 
 #include "std/string.h"
 
-class Common {
-
-public:
-    static mcpe::string getGameVersionStringNet();
-
+class Common
+{
+ public:
+  static mcpe::string getGameVersionStringNet();
 };

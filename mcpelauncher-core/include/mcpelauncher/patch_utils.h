@@ -2,32 +2,38 @@
 
 #include <cstdlib>
 
-class PatchUtils {
-
-private:
+class PatchUtils
+{
+ private:
   static const char *TAG;
 
-public:
-  class VtableReplaceHelper {
-
-  private:
+ public:
+  class VtableReplaceHelper
+  {
+   private:
     void *lib;
     void **vtable;
     void **referenceVtable;
 
-  public:
+   public:
     VtableReplaceHelper(void *lib, void **vtable, void **referenceVtable)
-        : lib(lib), vtable(vtable), referenceVtable(referenceVtable) {}
+        : lib(lib), vtable(vtable), referenceVtable(referenceVtable)
+    {
+    }
 
     void replace(void *sym, void *replacement);
 
     void replace(const char *name, void *replacement);
 
-    template <typename T> void replace(void *sym, T replacement) {
+    template <typename T>
+    void replace(void *sym, T replacement)
+    {
       replace(sym, memberFuncCast(replacement));
     }
 
-    template <typename T> void replace(const char *name, T replacement) {
+    template <typename T>
+    void replace(const char *name, T replacement)
+    {
       replace(name, memberFuncCast(replacement));
     }
   };
@@ -37,8 +43,11 @@ public:
 
   static size_t getVtableSize(void **vtable);
 
-  template <typename T> static void *memberFuncCast(T func) {
-    union {
+  template <typename T>
+  static void *memberFuncCast(T func)
+  {
+    union
+    {
       T func;
       void *ptr;
     } u;

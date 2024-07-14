@@ -2,17 +2,15 @@
 
 class IMinecraftApp;
 
-namespace Automation {
+namespace Automation
+{
 
-class AutomationClient {
-
-public:
-
+  class AutomationClient
+  {
+   public:
     char filler[0x500];
 
     AutomationClient(IMinecraftApp& a);
+  };
 
-
-};
-
-}
+}  // namespace Automation

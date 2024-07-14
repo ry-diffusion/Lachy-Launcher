@@ -2,16 +2,17 @@
 
 #include <string>
 
-namespace gamepad {
+namespace gamepad
+{
 
-class Gamepad;
+  class Gamepad;
 
-class Joystick {
-
-private:
+  class Joystick
+  {
+   private:
     Gamepad* gamepad = nullptr;
 
-public:
+   public:
     virtual std::string getGUID() const = 0;
 
     virtual bool getButton(int index) const = 0;
@@ -20,15 +21,15 @@ public:
 
     virtual int getHat(int index) const = 0;
 
-
-    Gamepad* getGamepad() const {
-        return gamepad;
+    Gamepad* getGamepad() const
+    {
+      return gamepad;
     }
 
-    void setGamepad(Gamepad* gamepad) {
-        this->gamepad = gamepad;
+    void setGamepad(Gamepad* gamepad)
+    {
+      this->gamepad = gamepad;
     }
+  };
 
-};
-
-}
+}  // namespace gamepad

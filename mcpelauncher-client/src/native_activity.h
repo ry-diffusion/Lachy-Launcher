@@ -24,34 +24,37 @@
 #define ANDROID_NATIVE_ACTIVITY_H
 #include <stdint.h>
 #include <sys/types.h>
+
 #include "jni.h"
 // #include <android/asset_manager.h>
 // #include <android/input.h>
 // #include <android/native_window.h>
-struct ANativeWindow {
-    
+struct ANativeWindow
+{
 };
 
-struct AInputQueue {
-    
+struct AInputQueue
+{
 };
 
-struct AAssetManager {
-    
+struct AAssetManager
+{
 };
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-/**
- * {@link ANativeActivityCallbacks}
- */
-struct ANativeActivityCallbacks;
-/**
- * This structure defines the native side of an android.app.NativeActivity.
- * It is created by the framework, and handed to the application's native
- * code as it is being launched.
- */
-typedef struct ANativeActivity {
+  /**
+   * {@link ANativeActivityCallbacks}
+   */
+  struct ANativeActivityCallbacks;
+  /**
+   * This structure defines the native side of an android.app.NativeActivity.
+   * It is created by the framework, and handed to the application's native
+   * code as it is being launched.
+   */
+  typedef struct ANativeActivity
+  {
     /**
      * Pointer to the callback function table of the native application.
      * You can set the functions here to your own callbacks.  The callbacks
@@ -99,8 +102,9 @@ typedef struct ANativeActivity {
      */
     void* instance;
     /**
-     * Pointer to the Asset Manager instance for the application.  The application
-     * uses this to access binary assets bundled inside its own .apk file.
+     * Pointer to the Asset Manager instance for the application.  The
+     * application uses this to access binary assets bundled inside its own .apk
+     * file.
      */
     AAssetManager* assetManager;
     /**
@@ -109,22 +113,23 @@ typedef struct ANativeActivity {
      * OBB files, this directory may not exist.
      */
     const char* obbPath;
-} ANativeActivity;
-/**
- * These are the callbacks the framework makes into a native application.
- * All of these callbacks happen on the main thread of the application.
- * By default, all callbacks are NULL; set to a pointer to your own function
- * to have it called.
- */
-typedef struct ANativeActivityCallbacks {
+  } ANativeActivity;
+  /**
+   * These are the callbacks the framework makes into a native application.
+   * All of these callbacks happen on the main thread of the application.
+   * By default, all callbacks are NULL; set to a pointer to your own function
+   * to have it called.
+   */
+  typedef struct ANativeActivityCallbacks
+  {
     /**
-     * NativeActivity has started.  See Java documentation for Activity.onStart()
-     * for more information.
+     * NativeActivity has started.  See Java documentation for
+     * Activity.onStart() for more information.
      */
     void (*onStart)(ANativeActivity* activity);
     /**
-     * NativeActivity has resumed.  See Java documentation for Activity.onResume()
-     * for more information.
+     * NativeActivity has resumed.  See Java documentation for
+     * Activity.onResume() for more information.
      */
     void (*onResume)(ANativeActivity* activity);
     /**
@@ -148,8 +153,8 @@ typedef struct ANativeActivityCallbacks {
      */
     void (*onStop)(ANativeActivity* activity);
     /**
-     * NativeActivity is being destroyed.  See Java documentation for Activity.onDestroy()
-     * for more information.
+     * NativeActivity is being destroyed.  See Java documentation for
+     * Activity.onDestroy() for more information.
      */
     void (*onDestroy)(ANativeActivity* activity);
     /**
@@ -161,20 +166,23 @@ typedef struct ANativeActivityCallbacks {
      * The drawing window for this native activity has been created.  You
      * can use the given native window object to start drawing.
      */
-    void (*onNativeWindowCreated)(ANativeActivity* activity, struct ANativeWindow* window);
+    void (*onNativeWindowCreated)(ANativeActivity* activity,
+                                  struct ANativeWindow* window);
     /**
      * The drawing window for this native activity has been resized.  You should
      * retrieve the new size from the window and ensure that your rendering in
      * it now matches.
      */
-    void (*onNativeWindowResized)(ANativeActivity* activity, struct ANativeWindow* window);
+    void (*onNativeWindowResized)(ANativeActivity* activity,
+                                  struct ANativeWindow* window);
     /**
-     * The drawing window for this native activity needs to be redrawn.  To avoid
-     * transient artifacts during screen changes (such resizing after rotation),
-     * applications should not return from this function until they have finished
-     * drawing their window in its current state.
+     * The drawing window for this native activity needs to be redrawn.  To
+     * avoid transient artifacts during screen changes (such resizing after
+     * rotation), applications should not return from this function until they
+     * have finished drawing their window in its current state.
      */
-    void (*onNativeWindowRedrawNeeded)(ANativeActivity* activity, struct ANativeWindow* window);
+    void (*onNativeWindowRedrawNeeded)(ANativeActivity* activity,
+                                       struct ANativeWindow* window);
     /**
      * The drawing window for this native activity is going to be destroyed.
      * You MUST ensure that you do not touch the window object after returning
@@ -183,22 +191,27 @@ typedef struct ANativeActivityCallbacks {
      * properly synchronize with the other thread to stop its drawing before
      * returning from here.
      */
-    void (*onNativeWindowDestroyed)(ANativeActivity* activity, struct ANativeWindow* window);
+    void (*onNativeWindowDestroyed)(ANativeActivity* activity,
+                                    struct ANativeWindow* window);
     /**
      * The input queue for this native activity's window has been created.
      * You can use the given input queue to start retrieving input events.
      */
-    void (*onInputQueueCreated)(ANativeActivity* activity, struct AInputQueue* queue);
+    void (*onInputQueueCreated)(ANativeActivity* activity,
+                                struct AInputQueue* queue);
     /**
      * The input queue for this native activity's window is being destroyed.
-     * You should no longer try to reference this object upon returning from this
-     * function.
+     * You should no longer try to reference this object upon returning from
+     * this function.
      */
-    void (*onInputQueueDestroyed)(ANativeActivity* activity, struct AInputQueue* queue);
+    void (*onInputQueueDestroyed)(ANativeActivity* activity,
+                                  struct AInputQueue* queue);
     /**
-     * The rectangle in the window in which content should be placed has changed.
+     * The rectangle in the window in which content should be placed has
+     * changed.
      */
-    void (*onContentRectChanged)(ANativeActivity* activity, const struct ARect* rect);
+    void (*onContentRectChanged)(ANativeActivity* activity,
+                                 const struct ARect* rect);
     /**
      * The current device AConfiguration has changed.  The new configuration can
      * be retrieved from assetManager.
@@ -210,51 +223,55 @@ typedef struct ANativeActivityCallbacks {
      * important processes.
      */
     void (*onLowMemory)(ANativeActivity* activity);
-} ANativeActivityCallbacks;
-/**
- * This is the function that must be in the native code to instantiate the
- * application's native activity.  It is called with the activity instance (see
- * above); if the code is being instantiated from a previously saved instance,
- * the savedState will be non-NULL and point to the saved data.  You must make
- * any copy of this data you need -- it will be released after you return from
- * this function.
- */
-typedef void ANativeActivity_createFunc(ANativeActivity* activity,
-        void* savedState, size_t savedStateSize);
-/**
- * The name of the function that NativeInstance looks for when launching its
- * native code.  This is the default function that is used, you can specify
- * "android.app.func_name" string meta-data in your manifest to use a different
- * function.
- */
-extern ANativeActivity_createFunc ANativeActivity_onCreate;
-/**
- * Finish the given activity.  Its finish() method will be called, causing it
- * to be stopped and destroyed.  Note that this method can be called from
- * *any* thread; it will send a message to the main thread of the process
- * where the Java finish call will take place.
- */
-void ANativeActivity_finish(ANativeActivity* activity);
-/**
- * Change the window format of the given activity.  Calls getWindow().setFormat()
- * of the given activity.  Note that this method can be called from
- * *any* thread; it will send a message to the main thread of the process
- * where the Java finish call will take place.
- */
-void ANativeActivity_setWindowFormat(ANativeActivity* activity, int32_t format);
-/**
- * Change the window flags of the given activity.  Calls getWindow().setFlags()
- * of the given activity.  Note that this method can be called from
- * *any* thread; it will send a message to the main thread of the process
- * where the Java finish call will take place.  See window.h for flag constants.
- */
-void ANativeActivity_setWindowFlags(ANativeActivity* activity,
-        uint32_t addFlags, uint32_t removeFlags);
-/**
- * Flags for ANativeActivity_showSoftInput; see the Java InputMethodManager
- * API for documentation.
- */
-enum {
+  } ANativeActivityCallbacks;
+  /**
+   * This is the function that must be in the native code to instantiate the
+   * application's native activity.  It is called with the activity instance
+   * (see above); if the code is being instantiated from a previously saved
+   * instance, the savedState will be non-NULL and point to the saved data.  You
+   * must make any copy of this data you need -- it will be released after you
+   * return from this function.
+   */
+  typedef void ANativeActivity_createFunc(ANativeActivity* activity,
+                                          void* savedState,
+                                          size_t savedStateSize);
+  /**
+   * The name of the function that NativeInstance looks for when launching its
+   * native code.  This is the default function that is used, you can specify
+   * "android.app.func_name" string meta-data in your manifest to use a
+   * different function.
+   */
+  extern ANativeActivity_createFunc ANativeActivity_onCreate;
+  /**
+   * Finish the given activity.  Its finish() method will be called, causing it
+   * to be stopped and destroyed.  Note that this method can be called from
+   * *any* thread; it will send a message to the main thread of the process
+   * where the Java finish call will take place.
+   */
+  void ANativeActivity_finish(ANativeActivity* activity);
+  /**
+   * Change the window format of the given activity.  Calls
+   * getWindow().setFormat() of the given activity.  Note that this method can
+   * be called from *any* thread; it will send a message to the main thread of
+   * the process where the Java finish call will take place.
+   */
+  void ANativeActivity_setWindowFormat(ANativeActivity* activity,
+                                       int32_t format);
+  /**
+   * Change the window flags of the given activity.  Calls
+   * getWindow().setFlags() of the given activity.  Note that this method can be
+   * called from *any* thread; it will send a message to the main thread of the
+   * process where the Java finish call will take place.  See window.h for flag
+   * constants.
+   */
+  void ANativeActivity_setWindowFlags(ANativeActivity* activity,
+                                      uint32_t addFlags, uint32_t removeFlags);
+  /**
+   * Flags for ANativeActivity_showSoftInput; see the Java InputMethodManager
+   * API for documentation.
+   */
+  enum
+  {
     /**
      * Implicit request to show the input window, not as the result
      * of a direct request by the user.
@@ -266,19 +283,20 @@ enum {
      * explicitly do so.
      */
     ANATIVEACTIVITY_SHOW_SOFT_INPUT_FORCED = 0x0002,
-};
-/**
- * Show the IME while in the given activity.  Calls InputMethodManager.showSoftInput()
- * for the given activity.  Note that this method can be called from
- * *any* thread; it will send a message to the main thread of the process
- * where the Java finish call will take place.
- */
-void ANativeActivity_showSoftInput(ANativeActivity* activity, uint32_t flags);
-/**
- * Flags for ANativeActivity_hideSoftInput; see the Java InputMethodManager
- * API for documentation.
- */
-enum {
+  };
+  /**
+   * Show the IME while in the given activity.  Calls
+   * InputMethodManager.showSoftInput() for the given activity.  Note that this
+   * method can be called from *any* thread; it will send a message to the main
+   * thread of the process where the Java finish call will take place.
+   */
+  void ANativeActivity_showSoftInput(ANativeActivity* activity, uint32_t flags);
+  /**
+   * Flags for ANativeActivity_hideSoftInput; see the Java InputMethodManager
+   * API for documentation.
+   */
+  enum
+  {
     /**
      * The soft input window should only be hidden if it was not
      * explicitly shown by the user.
@@ -289,16 +307,16 @@ enum {
      * originally shown with {@link ANATIVEACTIVITY_SHOW_SOFT_INPUT_FORCED}.
      */
     ANATIVEACTIVITY_HIDE_SOFT_INPUT_NOT_ALWAYS = 0x0002,
-};
-/**
- * Hide the IME while in the given activity.  Calls InputMethodManager.hideSoftInput()
- * for the given activity.  Note that this method can be called from
- * *any* thread; it will send a message to the main thread of the process
- * where the Java finish call will take place.
- */
-void ANativeActivity_hideSoftInput(ANativeActivity* activity, uint32_t flags);
+  };
+  /**
+   * Hide the IME while in the given activity.  Calls
+   * InputMethodManager.hideSoftInput() for the given activity.  Note that this
+   * method can be called from *any* thread; it will send a message to the main
+   * thread of the process where the Java finish call will take place.
+   */
+  void ANativeActivity_hideSoftInput(ANativeActivity* activity, uint32_t flags);
 #ifdef __cplusplus
 };
 #endif
-#endif // ANDROID_NATIVE_ACTIVITY_H
-/** @} */
+#endif  // ANDROID_NATIVE_ACTIVITY_H
+        /** @} */

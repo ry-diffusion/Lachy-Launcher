@@ -17,7 +17,7 @@ extern "C" {
 
 // int timerfd_create(int /*clockid*/, int /*flags*/);
 // int timerfd_settime(int /*fd*/, int /*flags*/,
-    // const struct itimerspec * /*new*/, struct itimerspec * /*old*/);
+// const struct itimerspec * /*new*/, struct itimerspec * /*old*/);
 #if 0
 int timerfd_gettime(int, struct itimerspec *);
 #endif

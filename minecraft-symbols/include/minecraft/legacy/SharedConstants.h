@@ -1,15 +1,16 @@
 #pragma once
 
-namespace Legacy {
-namespace Pre_0_17 {
+namespace Legacy
+{
+  namespace Pre_0_17
+  {
 
-class SharedConstants {
+    class SharedConstants
+    {
+     public:
+      /// @symbol _ZN15SharedConstants11BetaVersionE
+      static int* BetaVersion;
+    };
 
-public:
-    /// @symbol _ZN15SharedConstants11BetaVersionE
-    static int* BetaVersion;
-
-};
-
-}
-}
+  }  // namespace Pre_0_17
+}  // namespace Legacy

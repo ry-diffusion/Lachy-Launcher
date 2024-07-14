@@ -2,12 +2,14 @@
 
 #include "UUID.h"
 
-namespace Crypto {
+namespace Crypto
+{
 
-namespace Random {
+  namespace Random
+  {
 
-mce::UUID generateUUID();
+    mce::UUID generateUUID();
 
-}
+  }
 
-};
+};  // namespace Crypto

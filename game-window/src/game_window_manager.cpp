@@ -2,8 +2,8 @@
 
 std::shared_ptr<GameWindowManager> GameWindowManager::instance;
 
-std::shared_ptr<GameWindowManager> GameWindowManager::getManager() {
-    if (!instance)
-        instance = createManager();
-    return instance;
+std::shared_ptr<GameWindowManager> GameWindowManager::getManager()
+{
+  if (!instance) instance = createManager();
+  return instance;
 }

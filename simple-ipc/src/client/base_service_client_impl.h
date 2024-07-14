@@ -2,39 +2,44 @@
 
 #include <simpleipc/client/service_client_impl.h>
 
-namespace simpleipc {
-namespace client {
+#include <atomic>
 
-class base_service_client_impl : public service_client_impl {
+namespace simpleipc
+{
+  namespace client
+  {
 
-protected:
-    std::atomic<callback_interface*> cb;
+    class base_service_client_impl : public service_client_impl
+    {
+     protected:
+      std::atomic<callback_interface*> cb;
 
-public:
-    base_service_client_impl() : cb(nullptr) {
-    }
+     public:
+      base_service_client_impl() : cb(nullptr)
+      {
+      }
 
-    void set_callback_interface(callback_interface* cb) override {
+      void set_callback_interface(callback_interface* cb) override
+      {
         this->cb.store(cb);
-    }
+      }
 
-    void connection_closed(connection&) override {
+      void connection_closed(connection&) override
+      {
         close();
-        if (cb)
-            cb.load()->connection_closed();
-    }
+        if (cb) cb.load()->connection_closed();
+      }
 
-    void handle_message(connection&, response_message const& msg) override {
-        if (cb)
-            cb.load()->handle_message(msg);
-    }
+      void handle_message(connection&, response_message const& msg) override
+      {
+        if (cb) cb.load()->handle_message(msg);
+      }
 
-    void handle_message(connection&, error_message const& msg) override {
-        if (cb)
-            cb.load()->handle_message(msg);
-    }
+      void handle_message(connection&, error_message const& msg) override
+      {
+        if (cb) cb.load()->handle_message(msg);
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace client
+}  // namespace simpleipc

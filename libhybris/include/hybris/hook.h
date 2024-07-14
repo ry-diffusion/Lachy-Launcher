@@ -19,23 +19,25 @@
 #define _HYBRIS_HOOK_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-struct _hook {
+  struct _hook
+  {
     const char *name;
     void *func;
-};
+  };
 
-void hybris_hook(const char *name, void* func);
-void hybris_register_hooks(struct _hook *hooks);
+  void hybris_hook(const char *name, void *func);
+  void hybris_register_hooks(struct _hook *hooks);
 
-void *get_hooked_symbol(const char *sym);
+  void *get_hooked_symbol(const char *sym);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _HYBRIS_HOOK_H_
+#endif  // _HYBRIS_HOOK_H_
 
 // vim: noai:ts=4:sw=4:ss=4:expandtab

@@ -1,14 +1,15 @@
 #include <cll/http/http_client.h>
 
-namespace cll {
-namespace http {
+namespace cll
+{
+  namespace http
+  {
 
-class CurlHttpClient : public HttpClient {
+    class CurlHttpClient : public HttpClient
+    {
+     public:
+      std::unique_ptr<HttpRequest> createRequest() override;
+    };
 
-public:
-    std::unique_ptr<HttpRequest> createRequest() override;
-
-};
-
-}
-}
+  }  // namespace http
+}  // namespace cll

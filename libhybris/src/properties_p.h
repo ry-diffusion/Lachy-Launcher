@@ -18,7 +18,8 @@
 #ifndef HYBRIS_PROPERTIES
 #define HYBRIS_PROPERTIES
 
-typedef void (*hybris_propcache_list_cb)(const char *key, const char *value, void *cookie);
+typedef void (*hybris_propcache_list_cb)(const char *key, const char *value,
+                                         void *cookie);
 
 void hybris_propcache_list(hybris_propcache_list_cb cb, void *cookie);
 char *hybris_propcache_find(const char *key);

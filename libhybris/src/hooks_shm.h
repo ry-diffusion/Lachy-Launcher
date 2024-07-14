@@ -22,17 +22,18 @@
 
 typedef unsigned int hybris_shm_pointer_t;
 
-/* 
+/*
  * Allocate a space in the shared memory region of hybris
  */
 hybris_shm_pointer_t hybris_shm_alloc(size_t size);
-/* 
+/*
  * Test if the pointers points to the shm region
  */
 int hybris_is_pointer_in_shm(void *ptr);
-/* 
- * Convert an offset pointer to the shared memory to an absolute pointer that can be used in user space 
- * This function will return a NULL pointer if the handle does not actually point to the shm region
+/*
+ * Convert an offset pointer to the shared memory to an absolute pointer that
+ * can be used in user space This function will return a NULL pointer if the
+ * handle does not actually point to the shm region
  */
 void *hybris_get_shmpointer(hybris_shm_pointer_t handle);
 

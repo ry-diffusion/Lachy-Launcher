@@ -1,37 +1,39 @@
+#include <hybris/dlfcn.h>
+#include <log.h>
 #include <mcpelauncher/patch_utils.h>
 
 #include <cstring>
-#include <hybris/dlfcn.h>
-#include <log.h>
 #include <stdexcept>
 
 const char *PatchUtils::TAG = "Patch";
 
 void PatchUtils::patchCallInstruction(void *patchOff, void *func, bool jump,
-                                      char *backup) {
+                                      char *backup)
+{
   unsigned char *data = (unsigned char *)patchOff;
 
 #ifdef __arm__
   if (!jump)
     throw std::runtime_error("Non-jump patches not supported in ARM mode");
   bool thumb = ((size_t)patchOff) & 1;
-  if (thumb)
-    data--;
+  if (thumb) data--;
   Log::trace(TAG, "Patching - original: %i %i %i %i %i", data[0], data[1],
              data[2], data[3], data[4]);
-  if (thumb) {
-    unsigned char patch[4] = {0xdf, 0xf8, 0x00, 0xf0};
+  if (thumb)
+  {
+    unsigned char patch[4] = { 0xdf, 0xf8, 0x00, 0xf0 };
     memcpy(data, patch, 4);
-  } else {
-    unsigned char patch[4] = {0x04, 0xf0, 0x1f, 0xe5};
+  }
+  else
+  {
+    unsigned char patch[4] = { 0x04, 0xf0, 0x1f, 0xe5 };
     memcpy(data, patch, 4);
   }
   memcpy(&data[4], &func, sizeof(int));
   Log::trace(TAG, "Patching - result: %i %i %i %i %i", data[0], data[1],
              data[2], data[3], data[4]);
 #else
-  if (backup)
-    memcpy(backup, &data[0], 1 + sizeof(int));
+  if (backup) memcpy(backup, &data[0], 1 + sizeof(int));
 
   Log::trace(TAG, "Patching - original: %i %i %i %i %i", data[0], data[1],
              data[2], data[3], data[4]);
@@ -44,24 +46,28 @@ void PatchUtils::patchCallInstruction(void *patchOff, void *func, bool jump,
 }
 
 void PatchUtils::VtableReplaceHelper::replace(const char *name,
-                                              void *replacement) {
+                                              void *replacement)
+{
   replace(hybris_dlsym(lib, name), replacement);
 }
 
-void PatchUtils::VtableReplaceHelper::replace(void *sym, void *replacement) {
-  for (int i = 0;; i++) {
-    if (referenceVtable[i] == nullptr)
-      break;
-    if (referenceVtable[i] == sym) {
+void PatchUtils::VtableReplaceHelper::replace(void *sym, void *replacement)
+{
+  for (int i = 0;; i++)
+  {
+    if (referenceVtable[i] == nullptr) break;
+    if (referenceVtable[i] == sym)
+    {
       vtable[i] = replacement;
       return;
     }
   }
 }
 
-size_t PatchUtils::getVtableSize(void **vtable) {
-  for (size_t size = 2;; size++) {
-    if (vtable[size] == nullptr)
-      return size;
+size_t PatchUtils::getVtableSize(void **vtable)
+{
+  for (size_t size = 2;; size++)
+  {
+    if (vtable[size] == nullptr) return size;
   }
 }

@@ -1,36 +1,37 @@
 #pragma once
 
-class CpuId {
+class CpuId
+{
+ private:
+  unsigned int hiLeaf;
+  unsigned int hiExtLeaf;
+  char manufacturerId[4 * 3 + 1];
+  bool hasBrandString = false;
+  char brandString[48 + 1];
+  bool hasFeatureFlags = false;
+  int featureFlagsC = 0, featureFlagsD = 0;
 
-private:
-    unsigned int hiLeaf;
-    unsigned int hiExtLeaf;
-    char manufacturerId[4 * 3 + 1];
-    bool hasBrandString = false;
-    char brandString[48 + 1];
-    bool hasFeatureFlags = false;
-    int featureFlagsC = 0, featureFlagsD = 0;
+  static void cpuid(int data[4], int leaf);
 
-    static void cpuid(int data[4], int leaf);
+  void queryFeatureFlags();
 
-    void queryFeatureFlags();
+ public:
+  enum class FeatureFlag : unsigned char
+  {
+    SSSE3 = 9,
+    SSE41 = 19,
+    SSE42 = 20,
+    POPCNT = 23
+  };
 
-public:
-    enum class FeatureFlag : unsigned char {
-        SSSE3 = 9,
-        SSE41 = 19,
-        SSE42 = 20,
-        POPCNT = 23
-    };
+  CpuId();
 
-    CpuId();
+  const char* getManufacturer()
+  {
+    return manufacturerId;
+  }
 
-    const char* getManufacturer() {
-        return manufacturerId;
-    }
+  const char* getBrandString();
 
-    const char* getBrandString();
-
-    bool queryFeatureFlag(FeatureFlag flag);
-
+  bool queryFeatureFlag(FeatureFlag flag);
 };

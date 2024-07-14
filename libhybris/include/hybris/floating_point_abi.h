@@ -34,9 +34,9 @@
  **/
 
 #ifdef __ARM_PCS_VFP
-#  define FP_ATTRIB __attribute__((pcs("aapcs")))
+#define FP_ATTRIB __attribute__((pcs("aapcs")))
 #else
-#  define FP_ATTRIB
+#define FP_ATTRIB
 #endif
 
 #endif /* HYBRIS_FLOATING_POINT_ABI_H_ */

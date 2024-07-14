@@ -30,90 +30,87 @@
 #include "eglut.h"
 #include "eglut_x11.h"
 
-struct eglut_window {
-    EGLConfig config;
-    EGLContext context;
+struct eglut_window
+{
+  EGLConfig config;
+  EGLContext context;
 
-    /* initialized by native display */
-    struct {
-        union {
-            EGLNativeWindowType window;
-            EGLNativePixmapType pixmap;
-            EGLSurface surface; /* pbuffer or screen surface */
-        } u;
-        int x, y;
-        int width, height;
-    } native;
+  /* initialized by native display */
+  struct
+  {
+    union
+    {
+      EGLNativeWindowType window;
+      EGLNativePixmapType pixmap;
+      EGLSurface surface; /* pbuffer or screen surface */
+    } u;
+    int x, y;
+    int width, height;
+  } native;
 
-    EGLSurface surface;
+  EGLSurface surface;
 
-    int index;
+  int index;
 
-    EGLUTreshapeCB reshape_cb;
-    EGLUTdisplayCB display_cb;
-    EGLUTkeyboardCB keyboard_cb;
-    EGLUTspecialCB special_cb;
-    EGLUTpasteCB paste_cb;
-    EGLUTmouseCB mouse_cb;
-    EGLUTmouseRawCB mouse_raw_cb;
-    EGLUTmouseButtonCB mouse_button_cb;
-    EGLUTtouchStartCB touch_start_cb;
-    EGLUTtouchUpdateCB touch_update_cb;
-    EGLUTtouchEndCB touch_end_cb;
-    EGLUTfocusCB focus_cb;
-    EGLUTcloseCB close_cb;
-    int keyboardstate;
+  EGLUTreshapeCB reshape_cb;
+  EGLUTdisplayCB display_cb;
+  EGLUTkeyboardCB keyboard_cb;
+  EGLUTspecialCB special_cb;
+  EGLUTpasteCB paste_cb;
+  EGLUTmouseCB mouse_cb;
+  EGLUTmouseRawCB mouse_raw_cb;
+  EGLUTmouseButtonCB mouse_button_cb;
+  EGLUTtouchStartCB touch_start_cb;
+  EGLUTtouchUpdateCB touch_update_cb;
+  EGLUTtouchEndCB touch_end_cb;
+  EGLUTfocusCB focus_cb;
+  EGLUTcloseCB close_cb;
+  int keyboardstate;
 };
 
-struct eglut_state {
-    int api_mask;
-    int window_width, window_height;
-    int window_fullscreen;
-    const char *display_name;
-    int verbose;
-    int init_time;
+struct eglut_state
+{
+  int api_mask;
+  int window_width, window_height;
+  int window_fullscreen;
+  const char *display_name;
+  int verbose;
+  int init_time;
 
-    EGLUTidleCB idle_cb;
+  EGLUTidleCB idle_cb;
 
-    int num_windows;
+  int num_windows;
 
-    /* initialized by native display */
-    EGLNativeDisplayType native_dpy;
-    EGLint surface_type;
+  /* initialized by native display */
+  EGLNativeDisplayType native_dpy;
+  EGLint surface_type;
 
-    EGLDisplay dpy;
-    EGLint major, minor;
+  EGLDisplay dpy;
+  EGLint major, minor;
 
-    struct eglut_window *current;
+  struct eglut_window *current;
 
-    int redisplay;
+  int redisplay;
 };
 
 extern struct eglut_state *_eglut;
 
-void
-        _eglutFatal(char *format, ...);
+void _eglutFatal(char *format, ...);
 
-int
-        _eglutNow(void);
+int _eglutNow(void);
 
-void
-        _eglutNativeInitDisplay(void);
+void _eglutNativeInitDisplay(void);
 
-void
-        _eglutNativeFiniDisplay(void);
+void _eglutNativeFiniDisplay(void);
 
-void
-        _eglutNativeInitWindow(struct eglut_window *win, const char *title,
-                               int x, int y, int w, int h);
+void _eglutNativeInitWindow(struct eglut_window *win, const char *title, int x,
+                            int y, int w, int h);
 
-void
-        _eglutNativeFiniWindow(struct eglut_window *win);
+void _eglutNativeFiniWindow(struct eglut_window *win);
 
-void
-        _eglutNativeEventLoop(void);
+void _eglutNativeEventLoop(void);
 
-void*
-        _eglutReadPNG(const char *filename, unsigned int *width, unsigned int *height);
+void *_eglutReadPNG(const char *filename, unsigned int *width,
+                    unsigned int *height);
 
 #endif /* _EGLUTINT_H_ */

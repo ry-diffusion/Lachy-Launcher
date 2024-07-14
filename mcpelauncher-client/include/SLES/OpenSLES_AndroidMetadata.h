@@ -18,7 +18,8 @@
 #define OPENSL_ES_ANDROIDMETADATA_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -27,18 +28,18 @@ extern "C" {
 
 /**
  * Additional metadata keys to be used in SLMetadataExtractionItf:
- *   the ANDROID_KEY_PCMFORMAT_* keys follow the fields of the SLDataFormat_PCM struct, and as such
- *   all values corresponding to these keys are of SLuint32 type, and are defined as the fields
- *   of the same name in SLDataFormat_PCM.  The exception is that sample rate is expressed here
- *   in Hz units, rather than in milliHz units.
+ *   the ANDROID_KEY_PCMFORMAT_* keys follow the fields of the SLDataFormat_PCM
+ * struct, and as such all values corresponding to these keys are of SLuint32
+ * type, and are defined as the fields of the same name in SLDataFormat_PCM. The
+ * exception is that sample rate is expressed here in Hz units, rather than in
+ * milliHz units.
  */
-#define ANDROID_KEY_PCMFORMAT_NUMCHANNELS   "AndroidPcmFormatNumChannels"
-#define ANDROID_KEY_PCMFORMAT_SAMPLERATE    "AndroidPcmFormatSampleRate"
+#define ANDROID_KEY_PCMFORMAT_NUMCHANNELS "AndroidPcmFormatNumChannels"
+#define ANDROID_KEY_PCMFORMAT_SAMPLERATE "AndroidPcmFormatSampleRate"
 #define ANDROID_KEY_PCMFORMAT_BITSPERSAMPLE "AndroidPcmFormatBitsPerSample"
 #define ANDROID_KEY_PCMFORMAT_CONTAINERSIZE "AndroidPcmFormatContainerSize"
-#define ANDROID_KEY_PCMFORMAT_CHANNELMASK   "AndroidPcmFormatChannelMask"
-#define ANDROID_KEY_PCMFORMAT_ENDIANNESS    "AndroidPcmFormatEndianness"
-
+#define ANDROID_KEY_PCMFORMAT_CHANNELMASK "AndroidPcmFormatChannelMask"
+#define ANDROID_KEY_PCMFORMAT_ENDIANNESS "AndroidPcmFormatEndianness"
 
 #ifdef __cplusplus
 }

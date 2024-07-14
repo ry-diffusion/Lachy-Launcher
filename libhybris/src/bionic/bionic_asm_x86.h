@@ -36,16 +36,15 @@
 
 #pragma once
 
-#define PIC_PROLOGUE	\
-	pushl	%ebx;	\
-	call	666f;	\
-666:			\
-	popl	%ebx;	\
-	// addl	$_GLOBAL_OFFSET_TABLE_+(.-666b), %ebx - HACK: currently unused, so we delete it as it causes issues on OS X
-#define PIC_EPILOGUE	\
-	popl	%ebx
-#define PIC_PLT(x)	x@PLT
-#define PIC_GOT(x)	x@GOT(%ebx)
-#define PIC_GOTOFF(x)	x@GOTOFF(%ebx)
+#define PIC_PROLOGUE \
+  pushl % ebx;       \
+  call 666f;         \
+  666 : popl % ebx;  \
+  // addl	$_GLOBAL_OFFSET_TABLE_+(.-666b), %ebx - HACK: currently unused,
+  // so we delete it as it causes issues on OS X
+#define PIC_EPILOGUE popl % ebx
+#define PIC_PLT(x) x @PLT
+#define PIC_GOT(x) x @GOT(% ebx)
+#define PIC_GOTOFF(x) x @GOTOFF(% ebx)
 
 #define __bionic_asm_align 16

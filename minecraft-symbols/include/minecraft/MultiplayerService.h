@@ -2,18 +2,21 @@
 
 #include <memory>
 
-namespace Social {
+namespace Social
+{
 
-struct MultiplayerService {
+  struct MultiplayerService
+  {
     char filler[0x134];
-};
+  };
 
-struct MultiplayerXBL : public MultiplayerService, public std::enable_shared_from_this<MultiplayerXBL> {
-
+  struct MultiplayerXBL :
+      public MultiplayerService,
+      public std::enable_shared_from_this<MultiplayerXBL>
+  {
     char filler[0x200];
 
     MultiplayerXBL();
+  };
 
-};
-
-}
+}  // namespace Social

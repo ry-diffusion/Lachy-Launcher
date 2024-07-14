@@ -2,12 +2,12 @@
 
 #include <vector>
 
-struct Whitelist {
+struct Whitelist
+{
+  struct Entry
+  {
+    char filler[0x20];
+  };
 
-    struct Entry {
-        char filler[0x20];
-    };
-
-    std::vector<Entry> entries;
-
+  std::vector<Entry> entries;
 };

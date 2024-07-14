@@ -1,34 +1,41 @@
 #pragma once
 
-#include "../std/string.h"
-#include "../std/function.h"
-#include <vector>
 #include <functional>
+#include <vector>
 
-namespace Legacy {
+#include "../std/function.h"
+#include "../std/string.h"
 
-namespace Pre_1_8 {
+namespace Legacy
+{
 
-struct FilePickerSettings {
+  namespace Pre_1_8
+  {
 
-    enum class PickerType {
-        NONE, OPEN, SAVE
-    };
-    struct FileDescription {
+    struct FilePickerSettings
+    {
+      enum class PickerType
+      {
+        NONE,
+        OPEN,
+        SAVE
+      };
+      struct FileDescription
+      {
         mcpe::string ext, desc;
+      };
+
+      char filler[0x10];                                          // 10
+      mcpe::function<void(FilePickerSettings &)> cancelCallback;  // 20
+      mcpe::function<void(FilePickerSettings &, mcpe::string)>
+          pickedCallback;                             // 30
+      std::vector<FileDescription> fileDescriptions;  // 3c
+      int filler3;                                    // 40
+      PickerType type;                                // 44
+      mcpe::string defaultFileName;                   // 48
+      mcpe::string pickerTitle;                       // 52
     };
 
-    char filler[0x10]; // 10
-    mcpe::function<void(FilePickerSettings &)> cancelCallback; // 20
-    mcpe::function<void(FilePickerSettings &, mcpe::string)> pickedCallback; // 30
-    std::vector<FileDescription> fileDescriptions; // 3c
-    int filler3; // 40
-    PickerType type; // 44
-    mcpe::string defaultFileName; // 48
-    mcpe::string pickerTitle; // 52
+  }  // namespace Pre_1_8
 
-};
-
-}
-
-}
+}  // namespace Legacy

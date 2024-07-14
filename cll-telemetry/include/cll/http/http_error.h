@@ -2,15 +2,18 @@
 
 #include <exception>
 
-namespace cll {
-namespace http {
+namespace cll
+{
+  namespace http
+  {
 
-class HttpError : public std::exception {
+    class HttpError : public std::exception
+    {
+     public:
+      HttpError()
+      {
+      }
+    };
 
-public:
-    HttpError() {}
-
-};
-
-}
-}
+  }  // namespace http
+}  // namespace cll

@@ -1,27 +1,42 @@
 #pragma once
 
-#include <memory>
 #include <list>
+#include <memory>
+
 #include "file_event_batch.h"
 
-namespace cll {
+namespace cll
+{
 
-class MultiFileEventBatch : public EventBatch {
+  class MultiFileEventBatch : public EventBatch
+  {
+   private:
+    struct EventList : public BatchedEventList
+    {
+      std::unique_ptr<BatchedEventList> wrapped;
+      bool hasMoreFiles;
 
-private:
-    struct EventList : public BatchedEventList {
+      EventList(std::unique_ptr<BatchedEventList> wrapped, bool hasMore)
+          : wrapped(std::move(wrapped)), hasMoreFiles(hasMore)
+      {
+      }
 
-        std::unique_ptr<BatchedEventList> wrapped;
-        bool hasMoreFiles;
-
-        EventList(std::unique_ptr<BatchedEventList> wrapped, bool hasMore) :
-                wrapped(std::move(wrapped)), hasMoreFiles(hasMore) {}
-
-        const char* getData() const override { return wrapped->getData(); }
-        size_t getDataSize() const override { return wrapped->getDataSize(); }
-        size_t getEventCount() const override { return wrapped->getEventCount(); }
-        bool hasMoreEvents() const override { return hasMoreFiles | wrapped->hasMoreEvents(); }
-
+      const char* getData() const override
+      {
+        return wrapped->getData();
+      }
+      size_t getDataSize() const override
+      {
+        return wrapped->getDataSize();
+      }
+      size_t getEventCount() const override
+      {
+        return wrapped->getEventCount();
+      }
+      bool hasMoreEvents() const override
+      {
+        return hasMoreFiles | wrapped->hasMoreEvents();
+      }
     };
 
     std::string path;
@@ -42,22 +57,26 @@ private:
 
     void checkOldestBatch();
 
-public:
-    MultiFileEventBatch(std::string path, std::string prefix, std::string suffix,
-                        size_t fileMaxEvents, size_t fileMaxSize);
+   public:
+    MultiFileEventBatch(std::string path, std::string prefix,
+                        std::string suffix, size_t fileMaxEvents,
+                        size_t fileMaxSize);
 
     void setFileLimits(size_t maxSize, size_t maxEvents);
 
-    std::string const& getPath() const { return path; }
+    std::string const& getPath() const
+    {
+      return path;
+    }
 
     bool addEvent(nlohmann::json const& rawData) override;
 
-    std::unique_ptr<BatchedEventList> getEventsForUpload(size_t maxCount, size_t maxSize) override;
+    std::unique_ptr<BatchedEventList> getEventsForUpload(
+        size_t maxCount, size_t maxSize) override;
 
     void onEventsUploaded(BatchedEventList& events) override;
 
     bool hasEvents() const override;
+  };
 
-};
-
-}
+}  // namespace cll

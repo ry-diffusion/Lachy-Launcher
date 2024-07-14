@@ -2,21 +2,21 @@
 
 #include "std/string.h"
 
-namespace minecraft {
-namespace api {
+namespace minecraft
+{
+  namespace api
+  {
 
-class Api {
+    class Api
+    {
+     public:
+      void** vtable;
+      mcpe::string envPath;
+      void** playerIfaceVtable;
+      void** entityIfaceVtable;
+      void** networkIfaceVtable;
+      void** playerInteractionsIfaceVtable;
+    };
 
-public:
-
-    void** vtable;
-    mcpe::string envPath;
-    void** playerIfaceVtable;
-    void** entityIfaceVtable;
-    void** networkIfaceVtable;
-    void** playerInteractionsIfaceVtable;
-
-};
-
-}
-}
+  }  // namespace api
+}  // namespace minecraft

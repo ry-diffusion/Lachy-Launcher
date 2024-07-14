@@ -1,32 +1,37 @@
 #pragma once
-#include "../std/string.h"
 #include <string>
 
-namespace Legacy {
+#include "../std/string.h"
 
-namespace Pre_1_13 {
+namespace Legacy
+{
 
-namespace Core {
+  namespace Pre_1_13
+  {
 
-struct Path {
+    namespace Core
+    {
 
-    Path(const std::string & s) {
-        path = s.c_str();
-        size = s.length();
-    }
+      struct Path
+      {
+        Path(const std::string &s)
+        {
+          path = s.c_str();
+          size = s.length();
+        }
 
-    Path(const mcpe::string & s) {
-        path = s.c_str();
-        size = s.length();
-    }
+        Path(const mcpe::string &s)
+        {
+          path = s.c_str();
+          size = s.length();
+        }
 
-    const char *path;
-    size_t size;
+        const char *path;
+        size_t size;
+      };
 
-};
+    }  // namespace Core
 
-}
+  }  // namespace Pre_1_13
 
-}
-
-};
+};  // namespace Legacy

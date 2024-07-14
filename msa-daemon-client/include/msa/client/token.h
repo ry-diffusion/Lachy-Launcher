@@ -1,58 +1,74 @@
 #pragma once
 
-#include <string>
 #include <chrono>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include <string>
+
 #include "security_scope.h"
 
-namespace msa {
-namespace client {
+namespace msa
+{
+  namespace client
+  {
 
-enum class TokenType {
-    Legacy, Compact
-};
+    enum class TokenType
+    {
+      Legacy,
+      Compact
+    };
 
-class Token {
+    class Token
+    {
+     public:
+      using TimePoint = std::chrono::system_clock::time_point;
 
-public:
-    using TimePoint = std::chrono::system_clock::time_point;
+     protected:
+      SecurityScope securityScope;
+      TimePoint createTime, expireTime;
 
-protected:
-    SecurityScope securityScope;
-    TimePoint createTime, expireTime;
+      Token(nlohmann::json const& data);
 
-    Token(nlohmann::json const& data);
+     public:
+      Token()
+      {
+      }
 
-public:
-    Token() {}
+      Token(SecurityScope const& scope, TimePoint create, TimePoint expire)
+          : securityScope(scope), createTime(create), expireTime(expire)
+      {
+      }
 
-    Token(SecurityScope const& scope, TimePoint create, TimePoint expire) : securityScope(scope), createTime(create),
-                                                                            expireTime(expire) {}
+      virtual ~Token() = default;
 
-    virtual ~Token() = default;
+      virtual TokenType getType() const = 0;
 
-    virtual TokenType getType() const = 0;
+      SecurityScope const& getSecurityScope() const
+      {
+        return securityScope;
+      }
 
-    SecurityScope const& getSecurityScope() const { return securityScope; }
+      TimePoint getCreatedTime() const
+      {
+        return createTime;
+      }
 
-    TimePoint getCreatedTime() const { return createTime; }
+      TimePoint getExpiresTime() const
+      {
+        return expireTime;
+      }
 
-    TimePoint getExpiresTime() const { return expireTime; }
+      static std::shared_ptr<Token> fromJson(nlohmann::json const& data);
+    };
 
+    template <typename Ret>
+    Ret& token_cast(Token&);
 
-    static std::shared_ptr<Token> fromJson(nlohmann::json const& data);
+    template <typename Ret>
+    std::shared_ptr<Ret> token_pointer_cast(std::shared_ptr<Token>);
 
-};
+    template <typename Ret>
+    Ret const& token_cast(Token const&);
 
-template<typename Ret>
-Ret& token_cast(Token&);
-
-template <typename Ret>
-std::shared_ptr<Ret> token_pointer_cast(std::shared_ptr<Token>);
-
-template<typename Ret>
-Ret const& token_cast(Token const&);
-
-}
-}
+  }  // namespace client
+}  // namespace msa

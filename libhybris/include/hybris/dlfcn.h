@@ -21,19 +21,20 @@
 #include <dlfcn.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void *hybris_dlopen(const char *filename, int flag);
-void *hybris_dlsym(void *handle, const char *symbol);
-int   hybris_dlclose(void *handle);
-int   hybris_dladdr(const void *addr, Dl_info *info);
-const char *hybris_dlerror(void);
+  void *hybris_dlopen(const char *filename, int flag);
+  void *hybris_dlsym(void *handle, const char *symbol);
+  int hybris_dlclose(void *handle);
+  int hybris_dladdr(const void *addr, Dl_info *info);
+  const char *hybris_dlerror(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _HYBRIS_DLFCN_H_
+#endif  // _HYBRIS_DLFCN_H_
 
 // vim: noai:ts=4:sw=4:ss=4:expandtab

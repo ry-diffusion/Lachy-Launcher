@@ -1,30 +1,32 @@
 #pragma once
 
-#include "../common/unix_connection.h"
 #include "../../client/base_service_client_impl.h"
+#include "../common/unix_connection.h"
 
-namespace simpleipc {
-namespace client {
+namespace simpleipc
+{
+  namespace client
+  {
 
-class unix_service_client_impl : public base_service_client_impl {
+    class unix_service_client_impl : public base_service_client_impl
+    {
+     private:
+      int fd = -1;
+      std::string path;
+      std::shared_ptr<unix_connection> connection;
 
-private:
-    int fd = -1;
-    std::string path;
-    std::shared_ptr<unix_connection> connection;
+     public:
+      void open(std::string const& path) override;
 
-public:
-    void open(std::string const& path) override;
+      void send_message(rpc_message const& msg) override;
 
-    void send_message(rpc_message const& msg) override;
+      void close() override;
 
-    void close() override;
-
-    simpleipc::connection* get_connection() override {
+      simpleipc::connection* get_connection() override
+      {
         return connection.get();
-    }
+      }
+    };
 
-};
-
-}
-}
+  }  // namespace client
+}  // namespace simpleipc

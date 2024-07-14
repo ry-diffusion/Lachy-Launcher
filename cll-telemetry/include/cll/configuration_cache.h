@@ -1,27 +1,30 @@
 #pragma once
 
-#include <string>
-#include <nlohmann/json.hpp>
 #include <chrono>
+#include <nlohmann/json.hpp>
+#include <string>
 
-namespace cll {
+namespace cll
+{
 
-class Configuration;
+  class Configuration;
 
-struct CachedConfiguration {
+  struct CachedConfiguration
+  {
     std::chrono::system_clock::time_point expires;
     std::chrono::seconds refreshInterval;
     std::string etag;
     nlohmann::json data;
-};
+  };
 
-class ConfigurationCache {
-
-public:
+  class ConfigurationCache
+  {
+   public:
     virtual ~ConfigurationCache() = default;
-    virtual bool readFromCache(std::string const& url, CachedConfiguration& config) = 0;
-    virtual void writeConfigToCache(std::string const& url, CachedConfiguration const& config) = 0;
+    virtual bool readFromCache(std::string const& url,
+                               CachedConfiguration& config) = 0;
+    virtual void writeConfigToCache(std::string const& url,
+                                    CachedConfiguration const& config) = 0;
+  };
 
-};
-
-}
+}  // namespace cll

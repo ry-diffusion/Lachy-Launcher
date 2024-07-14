@@ -1,21 +1,30 @@
 #pragma once
 
-#include <unordered_map>
-#include <minecraft/std/string.h>
-#include <minecraft/UUID.h>
 #include <minecraft/ResourcePack.h>
+#include <minecraft/UUID.h>
+#include <minecraft/std/string.h>
 
-class StubKeyProvider : public IContentKeyProvider {
+#include <unordered_map>
 
-public:
-    virtual ~StubKeyProvider() { }
-    virtual mcpe::string getContentKey(mce::UUID const&) {
-        return mcpe::string();
-    }
-    virtual mcpe::string getAlternativeContentKey(mce::UUID const&) {
-        return mcpe::string();
-    }
-    virtual void setTempContentKeys(std::unordered_map<std::string, std::string> const&) { }
-    virtual void clearTempContentKeys() { }
-
+class StubKeyProvider : public IContentKeyProvider
+{
+ public:
+  virtual ~StubKeyProvider()
+  {
+  }
+  virtual mcpe::string getContentKey(mce::UUID const&)
+  {
+    return mcpe::string();
+  }
+  virtual mcpe::string getAlternativeContentKey(mce::UUID const&)
+  {
+    return mcpe::string();
+  }
+  virtual void setTempContentKeys(
+      std::unordered_map<std::string, std::string> const&)
+  {
+  }
+  virtual void clearTempContentKeys()
+  {
+  }
 };

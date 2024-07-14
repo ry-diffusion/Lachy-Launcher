@@ -2,20 +2,21 @@
 
 #include "std/string.h"
 
-class IPackTelemetry {};
-
-class IMinecraftEventing : public IPackTelemetry {
-public:
+class IPackTelemetry
+{
 };
 
-class MinecraftEventing : public IMinecraftEventing {
+class IMinecraftEventing : public IPackTelemetry
+{
+ public:
+};
 
-public:
+class MinecraftEventing : public IMinecraftEventing
+{
+ public:
+  char filler[0x100];
 
-    char filler[0x100];
+  MinecraftEventing(mcpe::string const& str);
 
-    MinecraftEventing(mcpe::string const& str);
-
-    void init();
-
+  void init();
 };

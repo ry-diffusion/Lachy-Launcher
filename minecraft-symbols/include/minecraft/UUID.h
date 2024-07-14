@@ -2,12 +2,12 @@
 
 #include "std/string.h"
 
-namespace mce {
+namespace mce
+{
 
-class UUID {
-
-public:
-
+  class UUID
+  {
+   public:
     static mce::UUID* EMPTY;
 
     static mce::UUID fromString(mcpe::string const&);
@@ -15,7 +15,6 @@ public:
     char filler[0x10];
 
     mcpe::string asString() const;
+  };
 
-};
-
-}
+}  // namespace mce

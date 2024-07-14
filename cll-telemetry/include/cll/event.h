@@ -1,62 +1,77 @@
 #pragma once
 
-#include <string>
-#include <nlohmann/json.hpp>
 #include <chrono>
+#include <nlohmann/json.hpp>
+#include <string>
 
-namespace cll {
+namespace cll
+{
 
-enum class EventFlags {
+  enum class EventFlags
+  {
     PersistenceNormal = 1,
     PersistenceCritical = 2,
 
     LatencyNormal = 256,
     LatencyRealtime = 512,
-};
-inline EventFlags operator |(EventFlags a, EventFlags b) {
-    return (EventFlags) ((int) a | (int) b);
-}
-inline bool EventFlagSet(EventFlags a, EventFlags b) {
-    return ((int) a & (int) b);
-}
+  };
+  inline EventFlags operator|(EventFlags a, EventFlags b)
+  {
+    return (EventFlags)((int)a | (int)b);
+  }
+  inline bool EventFlagSet(EventFlags a, EventFlags b)
+  {
+    return ((int)a & (int)b);
+  }
 
-class Event {
-
-public:
+  class Event
+  {
+   public:
     using Time = std::chrono::system_clock::time_point;
 
-private:
+   private:
     const std::string name;
     const nlohmann::json data;
     const EventFlags flags;
     const std::vector<std::string> ids;
     const Time time;
 
-public:
-    Event(std::string name, nlohmann::json data, EventFlags flags, std::vector<std::string> ids = {},
-          Time time = std::chrono::system_clock::now()) :
-            name(std::move(name)), data(std::move(data)), flags(flags), ids(std::move(ids)), time(time) {}
-
-    std::string const& getName() const {
-        return name;
+   public:
+    Event(std::string name, nlohmann::json data, EventFlags flags,
+          std::vector<std::string> ids = {},
+          Time time = std::chrono::system_clock::now())
+        : name(std::move(name)),
+          data(std::move(data)),
+          flags(flags),
+          ids(std::move(ids)),
+          time(time)
+    {
     }
 
-    nlohmann::json const& getData() const {
-        return data;
+    std::string const& getName() const
+    {
+      return name;
     }
 
-    EventFlags getFlags() const {
-        return flags;
+    nlohmann::json const& getData() const
+    {
+      return data;
     }
 
-    std::vector<std::string> const& getIds() const {
-        return ids;
+    EventFlags getFlags() const
+    {
+      return flags;
     }
 
-    std::chrono::system_clock::time_point getTime() const {
-        return time;
+    std::vector<std::string> const& getIds() const
+    {
+      return ids;
     }
 
-};
+    std::chrono::system_clock::time_point getTime() const
+    {
+      return time;
+    }
+  };
 
-}
+}  // namespace cll

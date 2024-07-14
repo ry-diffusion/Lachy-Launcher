@@ -3,10 +3,24 @@
 #include <functional>
 #include <string>
 
-enum class GraphicsApi { OPENGL, OPENGL_ES2 };
-enum class KeyAction { PRESS, REPEAT, RELEASE };
-enum class MouseButtonAction { PRESS, RELEASE };
-enum class GamepadButtonId {
+enum class GraphicsApi
+{
+  OPENGL,
+  OPENGL_ES2
+};
+enum class KeyAction
+{
+  PRESS,
+  REPEAT,
+  RELEASE
+};
+enum class MouseButtonAction
+{
+  PRESS,
+  RELEASE
+};
+enum class GamepadButtonId
+{
   A,
   B,
   X,
@@ -24,7 +38,8 @@ enum class GamepadButtonId {
   DPAD_LEFT,
   UNKNOWN = -1
 };
-enum class GamepadAxisId {
+enum class GamepadAxisId
+{
   LEFT_X,
   LEFT_Y,
   RIGHT_X,
@@ -34,9 +49,9 @@ enum class GamepadAxisId {
   UNKNOWN = -1
 };
 
-class GameWindow {
-
-public:
+class GameWindow
+{
+ public:
   using DrawCallback = std::function<void()>;
   using WindowSizeCallback = std::function<void(int, int)>;
   using MouseButtonCallback =
@@ -59,7 +74,7 @@ public:
 
   double fps = -1;
 
-private:
+ private:
   DrawCallback drawCallback;
   WindowSizeCallback windowSizeCallback;
   MouseButtonCallback mouseButtonCallback;
@@ -78,11 +93,14 @@ private:
   FocusChangeCallback focusChangeCallback;
   OnGUIFrame guiFrameCallback;
 
-public:
-  GameWindow(std::string const &title, int width, int height, GraphicsApi api) {
+ public:
+  GameWindow(std::string const &title, int width, int height, GraphicsApi api)
+  {
   }
 
-  virtual ~GameWindow() {}
+  virtual ~GameWindow()
+  {
+  }
 
   virtual void setIcon(std::string const &iconPath) = 0;
 
@@ -108,154 +126,177 @@ public:
 
   virtual void swapInterval(int interval) = 0;
 
-  virtual void setKeyboardState(int state) {}
+  virtual void setKeyboardState(int state)
+  {
+  }
 
-  void setDrawCallback(DrawCallback callback) {
+  void setDrawCallback(DrawCallback callback)
+  {
     drawCallback = std::move(callback);
   }
 
-  void setWindowSizeCallback(WindowSizeCallback callback) {
+  void setWindowSizeCallback(WindowSizeCallback callback)
+  {
     windowSizeCallback = std::move(callback);
   }
 
-  void setMouseButtonCallback(MouseButtonCallback callback) {
+  void setMouseButtonCallback(MouseButtonCallback callback)
+  {
     mouseButtonCallback = std::move(callback);
   }
 
-  void setMousePositionCallback(MousePositionCallback callback) {
+  void setMousePositionCallback(MousePositionCallback callback)
+  {
     mousePositionCallback = std::move(callback);
   }
 
-  void setMouseScrollCallback(MouseScrollCallback callback) {
+  void setMouseScrollCallback(MouseScrollCallback callback)
+  {
     mouseScrollCallback = std::move(callback);
   }
 
-  void setTouchStartCallback(TouchStartCallback callback) {
+  void setTouchStartCallback(TouchStartCallback callback)
+  {
     touchStartCallback = std::move(callback);
   }
 
-  void setTouchUpdateCallback(TouchUpdateCallback callback) {
+  void setTouchUpdateCallback(TouchUpdateCallback callback)
+  {
     touchUpdateCallback = std::move(callback);
   }
 
-  void setTouchEndCallback(TouchEndCallback callback) {
+  void setTouchEndCallback(TouchEndCallback callback)
+  {
     touchEndCallback = std::move(callback);
   }
 
-  void setKeyboardCallback(KeyboardCallback callback) {
+  void setKeyboardCallback(KeyboardCallback callback)
+  {
     keyboardCallback = std::move(callback);
   }
 
-  void setKeyboardTextCallback(KeyboardTextCallback callback) {
+  void setKeyboardTextCallback(KeyboardTextCallback callback)
+  {
     keyboardTextCallback = std::move(callback);
   }
 
-  void setPasteCallback(PasteCallback callback) {
+  void setPasteCallback(PasteCallback callback)
+  {
     pasteCallback = std::move(callback);
   }
 
   // Used when the cursor is disabled
-  void setMouseRelativePositionCallback(MousePositionCallback callback) {
+  void setMouseRelativePositionCallback(MousePositionCallback callback)
+  {
     mouseRelativePositionCallback = std::move(callback);
   }
 
-  void setGamepadStateCallback(GamepadStateCallback callback) {
+  void setGamepadStateCallback(GamepadStateCallback callback)
+  {
     gamepadStateCallback = std::move(callback);
   }
 
-  void setGamepadButtonCallback(GamepadButtonCallback callback) {
+  void setGamepadButtonCallback(GamepadButtonCallback callback)
+  {
     gamepadButtonCallback = std::move(callback);
   }
 
-  void setGamepadAxisCallback(GamepadAxisCallback callback) {
+  void setGamepadAxisCallback(GamepadAxisCallback callback)
+  {
     gamepadAxisCallback = std::move(callback);
   }
 
-  void setCloseCallback(CloseCallback callback) {
+  void setCloseCallback(CloseCallback callback)
+  {
     closeCallback = std::move(callback);
   }
 
-  void setFocusChangeCallback(FocusChangeCallback callback) {
+  void setFocusChangeCallback(FocusChangeCallback callback)
+  {
     focusChangeCallback = std::move(callback);
   }
 
-  void setOnGUIFrame(OnGUIFrame callback) {
+  void setOnGUIFrame(OnGUIFrame callback)
+  {
     guiFrameCallback = std::move(callback);
   }
 
-protected:
-  void onDraw() {
-    if (drawCallback != nullptr)
-      drawCallback();
+ protected:
+  void onDraw()
+  {
+    if (drawCallback != nullptr) drawCallback();
   }
-  void onWindowSizeChanged(int w, int h) {
-    if (windowSizeCallback != nullptr)
-      windowSizeCallback(w, h);
+  void onWindowSizeChanged(int w, int h)
+  {
+    if (windowSizeCallback != nullptr) windowSizeCallback(w, h);
   }
-  void onMouseButton(double x, double y, int button, MouseButtonAction action) {
+  void onMouseButton(double x, double y, int button, MouseButtonAction action)
+  {
     if (mouseButtonCallback != nullptr)
       mouseButtonCallback(x, y, button, action);
   }
-  void onMousePosition(double x, double y) {
-    if (mousePositionCallback != nullptr)
-      mousePositionCallback(x, y);
+  void onMousePosition(double x, double y)
+  {
+    if (mousePositionCallback != nullptr) mousePositionCallback(x, y);
   }
-  void onMouseRelativePosition(double x, double y) {
+  void onMouseRelativePosition(double x, double y)
+  {
     if (mouseRelativePositionCallback != nullptr)
       mouseRelativePositionCallback(x, y);
   }
-  void onMouseScroll(double x, double y, double dx, double dy) {
-    if (mouseScrollCallback != nullptr)
-      mouseScrollCallback(x, y, dx, dy);
+  void onMouseScroll(double x, double y, double dx, double dy)
+  {
+    if (mouseScrollCallback != nullptr) mouseScrollCallback(x, y, dx, dy);
   }
-  void onTouchStart(int id, double x, double y) {
-    if (touchStartCallback != nullptr)
-      touchStartCallback(id, x, y);
+  void onTouchStart(int id, double x, double y)
+  {
+    if (touchStartCallback != nullptr) touchStartCallback(id, x, y);
   }
-  void onTouchUpdate(int id, double x, double y) {
-    if (touchUpdateCallback != nullptr)
-      touchUpdateCallback(id, x, y);
+  void onTouchUpdate(int id, double x, double y)
+  {
+    if (touchUpdateCallback != nullptr) touchUpdateCallback(id, x, y);
   }
-  void onTouchEnd(int id, double x, double y) {
-    if (touchEndCallback != nullptr)
-      touchEndCallback(id, x, y);
+  void onTouchEnd(int id, double x, double y)
+  {
+    if (touchEndCallback != nullptr) touchEndCallback(id, x, y);
   }
-  void onKeyboard(int key, KeyAction action) {
-    if (keyboardCallback != nullptr)
-      keyboardCallback(key, action);
+  void onKeyboard(int key, KeyAction action)
+  {
+    if (keyboardCallback != nullptr) keyboardCallback(key, action);
   }
-  void onKeyboardText(std::string const &c) {
-    if (keyboardTextCallback != nullptr)
-      keyboardTextCallback(c);
+  void onKeyboardText(std::string const &c)
+  {
+    if (keyboardTextCallback != nullptr) keyboardTextCallback(c);
   }
-  void onPaste(std::string const &c) {
-    if (pasteCallback != nullptr)
-      pasteCallback(c);
+  void onPaste(std::string const &c)
+  {
+    if (pasteCallback != nullptr) pasteCallback(c);
   }
-  void onGamepadState(int id, bool connected) {
-    if (gamepadStateCallback != nullptr)
-      gamepadStateCallback(id, connected);
+  void onGamepadState(int id, bool connected)
+  {
+    if (gamepadStateCallback != nullptr) gamepadStateCallback(id, connected);
   }
-  void onGamepadButton(int id, GamepadButtonId btn, bool pressed) {
+  void onGamepadButton(int id, GamepadButtonId btn, bool pressed)
+  {
     if (gamepadButtonCallback != nullptr)
       gamepadButtonCallback(id, btn, pressed);
   }
-  void onGamepadAxis(int id, GamepadAxisId axis, float val) {
-    if (gamepadAxisCallback != nullptr)
-      gamepadAxisCallback(id, axis, val);
+  void onGamepadAxis(int id, GamepadAxisId axis, float val)
+  {
+    if (gamepadAxisCallback != nullptr) gamepadAxisCallback(id, axis, val);
   }
-  void onClose() {
-    if (closeCallback != nullptr)
-      closeCallback();
-  }
-
-  void onFocusChange(bool hasfocus) {
-    if (focusChangeCallback != nullptr)
-      focusChangeCallback(hasfocus);
+  void onClose()
+  {
+    if (closeCallback != nullptr) closeCallback();
   }
 
-  void onGUIFrame() {
-    if (guiFrameCallback != nullptr)
-      guiFrameCallback();
+  void onFocusChange(bool hasfocus)
+  {
+    if (focusChangeCallback != nullptr) focusChangeCallback(hasfocus);
+  }
+
+  void onGUIFrame()
+  {
+    if (guiFrameCallback != nullptr) guiFrameCallback();
   }
 };

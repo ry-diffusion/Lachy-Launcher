@@ -5,23 +5,24 @@
 class Minecraft;
 class ServerLevel;
 
-class CommandOrigin {
+class CommandOrigin
+{
 };
 
-enum class CommandPermissionLevel {
-    Visitor = 0,
-    ByPassSpawn = 1,
-    Operator = 2,
-    ServerAdministrator = 3,
-    ServerConsole = 4
+enum class CommandPermissionLevel
+{
+  Visitor = 0,
+  ByPassSpawn = 1,
+  Operator = 2,
+  ServerAdministrator = 3,
+  ServerConsole = 4
 };
 
-class ServerCommandOrigin : public CommandOrigin {
+class ServerCommandOrigin : public CommandOrigin
+{
+ public:
+  char filler[0x20];
 
-public:
-
-    char filler[0x20];
-
-    ServerCommandOrigin(mcpe::string const& s, ServerLevel& m, CommandPermissionLevel l);
-
+  ServerCommandOrigin(mcpe::string const& s, ServerLevel& m,
+                      CommandPermissionLevel l);
 };

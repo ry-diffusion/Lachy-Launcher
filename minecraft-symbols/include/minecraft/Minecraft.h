@@ -3,11 +3,9 @@
 class MinecraftCommands;
 class Level;
 
-class Minecraft {
-
-public:
-
-    MinecraftCommands* getCommands();
-    Level* getLevel() const;
-
+class Minecraft
+{
+ public:
+  MinecraftCommands* getCommands();
+  Level* getLevel() const;
 };

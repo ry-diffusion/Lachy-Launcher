@@ -1,10 +1,9 @@
 #pragma once
 
-struct NullTextToSpeechClient {
+struct NullTextToSpeechClient
+{
+  /// @symbol _ZTV22NullTextToSpeechClient
+  static void** myVtable;
 
-    /// @symbol _ZTV22NullTextToSpeechClient
-    static void** myVtable;
-
-    void** vtable;
-
+  void** vtable;
 };

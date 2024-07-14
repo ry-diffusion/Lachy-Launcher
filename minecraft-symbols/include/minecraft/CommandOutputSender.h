@@ -1,26 +1,30 @@
 #pragma once
 
 #include <vector>
+
 #include "std/string.h"
 
 class CommandOrigin;
 class CommandOutput;
-namespace Automation { class AutomationClient; }
+namespace Automation
+{
+  class AutomationClient;
+}
 
-class CommandOutputSender {
+class CommandOutputSender
+{
+ public:
+  static std::vector<mcpe::string> translate(
+      std::vector<mcpe::string> const& v);
 
-public:
+  /// @symbol _ZN19CommandOutputSenderC2ERN10Automation16AutomationClientE
+  CommandOutputSender(Automation::AutomationClient& automationClient);
 
-    static std::vector<mcpe::string> translate(std::vector<mcpe::string> const& v);
+  virtual ~CommandOutputSender();
 
-    /// @symbol _ZN19CommandOutputSenderC2ERN10Automation16AutomationClientE
-    CommandOutputSender(Automation::AutomationClient& automationClient);
+  virtual void send(CommandOrigin const& origin, CommandOutput const& output);
 
-    virtual ~CommandOutputSender();
-
-    virtual void send(CommandOrigin const& origin, CommandOutput const& output);
-
-    /// @symbol _ZN19CommandOutputSender22registerOutputCallbackERKSt8functionIFvR19AutomationCmdOutputEE
-    virtual void registerOutputCallback();
-
+  /// @symbol
+  /// _ZN19CommandOutputSender22registerOutputCallbackERKSt8functionIFvR19AutomationCmdOutputEE
+  virtual void registerOutputCallback();
 };

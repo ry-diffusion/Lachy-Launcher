@@ -2,23 +2,25 @@
 
 #include "std/string.h"
 
-struct gl {
-    static mcpe::string getOpenGLVendor();
-    static mcpe::string getOpenGLRenderer();
-    static mcpe::string getOpenGLVersion();
-    static mcpe::string getOpenGLExtensions();
+struct gl
+{
+  static mcpe::string getOpenGLVendor();
+  static mcpe::string getOpenGLRenderer();
+  static mcpe::string getOpenGLVersion();
+  static mcpe::string getOpenGLExtensions();
 };
 
-namespace mce {
+namespace mce
+{
 
-namespace Platform {
+  namespace Platform
+  {
 
-struct OGL {
+    struct OGL
+    {
+      static void InitBindings();
+    };
 
-    static void InitBindings();
+  }  // namespace Platform
 
-};
-
-}
-
-}
+}  // namespace mce

@@ -2,18 +2,18 @@
 
 #include <game_window.h>
 
-class WindowWithLinuxJoystick : public GameWindow {
+class WindowWithLinuxJoystick : public GameWindow
+{
+ private:
+  friend class LinuxGamepadJoystickManager;
 
-private:
-    friend class LinuxGamepadJoystickManager;
+ public:
+  WindowWithLinuxJoystick(std::string const& title, int width, int height,
+                          GraphicsApi api);
 
-public:
-    WindowWithLinuxJoystick(std::string const& title, int width, int height, GraphicsApi api);
+  ~WindowWithLinuxJoystick() override;
 
-    ~WindowWithLinuxJoystick() override;
+  void addWindowToGamepadManager();
 
-    void addWindowToGamepadManager();
-
-    void updateGamepad();
-
+  void updateGamepad();
 };
