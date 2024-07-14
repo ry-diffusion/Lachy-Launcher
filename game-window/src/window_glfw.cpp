@@ -1,10 +1,7 @@
 #include "window_glfw.h"
 #include "GLFW/glfw3.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "imgui.h"
 #include "joystick_manager_glfw.h"
 
-#include "backends/imgui_impl_glfw.h"
 #include <codecvt>
 #include <iomanip>
 #include <math.h>
@@ -38,8 +35,6 @@ GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
   glfwSetWindowFocusCallback(window, _glfwWindowFocusCallback);
   glfwSetWindowContentScaleCallback(window, _glfwWindowContentScaleCallback);
   glfwMakeContextCurrent(window);
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
-  ImGui_ImplOpenGL3_Init("#version 100");
 
   setRelativeScale();
 }
@@ -115,14 +110,7 @@ void GLFWGameWindow::setClipboardText(std::string const &text) {
 }
 
 void GLFWGameWindow::swapBuffers() {
-  // ImGui_ImplOpenGL3_NewFrame();
-  // ImGui_ImplGlfw_NewFrame();
-  // ImGui::NewFrame();
-
   this->onGUIFrame();
-
-  // ImGui::Render();
-  // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
   glfwSwapBuffers(window);
 

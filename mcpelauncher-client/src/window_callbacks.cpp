@@ -1,5 +1,4 @@
 #include "window_callbacks.h"
-#include "imgui.h"
 #include "log.h"
 #include "minecraft/std/string_linux.h"
 #include "minecraft_gamepad_mapping.h"

@@ -25,10 +25,9 @@
 #endif
 #include "JNIBinding.h"
 #include "OpenSLESPatch.h"
-#include "imgui.h"
+
 #include "native_activity.h"
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+
 #include <build_info.h>
 #include <dirent.h>
 #include <fstream>
@@ -206,18 +205,6 @@ int main(int argc, char *argv[]) {
     MinecraftUtils::stubFMod();
   // Get rid of defining OPENSSL_armcap
   hybris_hook("OPENSSL_cpuid_setup", (void *)+[]() -> void {});
-
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO &io = ImGui::GetIO();
-  (void)io;
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
-
-  // Setup Dear ImGui style
-  ImGui::StyleColorsDark();
 
   MinecraftUtils::setupHybris();
 

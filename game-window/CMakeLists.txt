@@ -20,4 +20,3 @@ elseif (GAMEWINDOW_SYSTEM STREQUAL "GLFW")
     target_link_libraries(gamewindow PUBLIC glfw)
 endif()
 
-target_link_libraries(gamewindow PUBLIC imgui)

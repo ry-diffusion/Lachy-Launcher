@@ -27,6 +27,5 @@ else()
     target_sources(mcpelauncher-client PRIVATE src/cpuid.cpp src/cpuid.h)
 endif()
 
-target_link_libraries(mcpelauncher-client imgui)
 install(TARGETS mcpelauncher-client RUNTIME COMPONENT mcpelauncher-client DESTINATION bin)
 include(CPackSettings.cmake)
