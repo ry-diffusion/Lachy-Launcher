@@ -31,6 +31,6 @@ namespace Legacy
                         Vec2 const&);
     };
 
-  }  // namespace Pre_1_2_10
+  }
 
-}  // namespace Legacy
+}

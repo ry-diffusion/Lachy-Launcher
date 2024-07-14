@@ -65,6 +65,6 @@ namespace Legacy
       Options* getOptions();
     };
 
-  }  // namespace Pre_1_1
+  }
 
-}  // namespace Legacy
+}

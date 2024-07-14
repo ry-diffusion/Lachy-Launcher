@@ -21,6 +21,6 @@ namespace mce
       static void InitBindings();
     };
 
-  }  // namespace Platform
+  }
 
-}  // namespace mce
+}

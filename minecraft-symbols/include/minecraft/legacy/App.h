@@ -29,6 +29,6 @@ namespace Legacy
       void setSize(int, int, float);
     };
 
-  }  // namespace Pre_0_15
+  }
 
-}  // namespace Legacy
+}

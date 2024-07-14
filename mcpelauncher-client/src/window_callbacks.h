@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 
+#include "minecraft/MinecraftClient.h"
 #include "native_activity.h"
 
 class MinecraftGameWrapper;
@@ -29,7 +30,7 @@ class WindowCallbacks
   bool fullscreen = false;
 
  public:
-  void **MinecraftClient;
+  MinecraftClient **client;
   void *handle = 0;
   jnivm::VM *vm = 0;
   WindowCallbacks(GameWindow &window, ANativeActivity &activity)

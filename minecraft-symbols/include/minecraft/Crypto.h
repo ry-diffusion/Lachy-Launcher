@@ -12,4 +12,4 @@ namespace Crypto
 
   }
 
-};  // namespace Crypto
+};

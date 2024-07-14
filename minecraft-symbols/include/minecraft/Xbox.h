@@ -332,6 +332,6 @@ namespace xbox
         void set_diagnostics_trace_level(int);
       };
 
-    }  // namespace system
-  }  // namespace services
-}  // namespace xbox
+    }
+  }
+}

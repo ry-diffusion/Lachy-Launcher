@@ -12,3 +12,5 @@ Cpp11BracedListStyle: false
 IncludeBlocks: Regroup
 IndentWidth: 2
 NamespaceIndentation: All
+CommentPragmas: false
+FixNamespaceComments: false

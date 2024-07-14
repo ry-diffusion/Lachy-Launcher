@@ -12,5 +12,5 @@ namespace Legacy
       static int* BetaVersion;
     };
 
-  }  // namespace Pre_0_17
-}  // namespace Legacy
+  }
+}

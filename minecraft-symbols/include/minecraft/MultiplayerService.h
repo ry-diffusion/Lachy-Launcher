@@ -19,4 +19,4 @@ namespace Social
     MultiplayerXBL();
   };
 
-}  // namespace Social
+}

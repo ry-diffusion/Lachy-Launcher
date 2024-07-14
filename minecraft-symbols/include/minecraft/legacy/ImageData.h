@@ -19,5 +19,5 @@ namespace Legacy
       int mipLevel;
     };
 
-  }  // namespace Pre_0_14
-}  // namespace Legacy
+  }
+}

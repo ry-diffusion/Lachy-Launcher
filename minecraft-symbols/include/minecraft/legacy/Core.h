@@ -30,8 +30,8 @@ namespace Legacy
         size_t size;
       };
 
-    }  // namespace Core
+    }
 
-  }  // namespace Pre_1_13
+  }
 
-};  // namespace Legacy
+};

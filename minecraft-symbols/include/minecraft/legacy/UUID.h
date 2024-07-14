@@ -17,7 +17,7 @@ namespace Legacy
         mcpe::string toString() const;
       };
 
-    }  // namespace mce
+    }
 
-  }  // namespace Pre_1_0_4
-}  // namespace Legacy
+  }
+}

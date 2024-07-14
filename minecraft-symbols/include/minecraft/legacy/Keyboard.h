@@ -40,6 +40,6 @@ namespace Legacy
       static void feedText(mcpe::string const&, bool);
     };
 
-  }  // namespace Pre_0_17
+  }
 
-}  // namespace Legacy
+}

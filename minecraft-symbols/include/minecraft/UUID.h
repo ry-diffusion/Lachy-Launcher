@@ -17,4 +17,4 @@ namespace mce
     mcpe::string asString() const;
   };
 
-}  // namespace mce
+}

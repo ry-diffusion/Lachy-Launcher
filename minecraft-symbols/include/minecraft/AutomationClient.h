@@ -13,4 +13,4 @@ namespace Automation
     AutomationClient(IMinecraftApp& a);
   };
 
-}  // namespace Automation
+}

@@ -26,10 +26,10 @@ namespace Legacy
           mcpe::string get_value_from_local_storage(mcpe::string const& value);
         };
 
-      }  // namespace services
-    }  // namespace xbox
+      }
+    }
 
-  }  // namespace Pre_1_8
+  }
 
   namespace Pre_1_4
   {
@@ -70,11 +70,11 @@ namespace Legacy
             std::shared_ptr<::xbox::services::system::auth_config>
             get_auth_config();
           };
-        }  // namespace system
-      }  // namespace services
-    }  // namespace xbox
+        }
+      }
+    }
 
-  }  // namespace Pre_1_4
+  }
 
   namespace Pre_1_2_3
   {
@@ -87,9 +87,9 @@ namespace Legacy
         {
           struct auth_flow_result;
           struct token_and_signature_result;
-        }  // namespace system
-      }  // namespace services
-    }  // namespace xbox
+        }
+      }
+    }
 
     namespace pplx
     {
@@ -114,7 +114,7 @@ namespace Legacy
         get();
       };
 
-    }  // namespace pplx
+    }
 
     namespace xbox
     {
@@ -186,11 +186,11 @@ namespace Legacy
             system::auth_flow_result auth_flow_result;
           };
 
-        }  // namespace system
-      }  // namespace services
-    }  // namespace xbox
+        }
+      }
+    }
 
-  }  // namespace Pre_1_2_3
+  }
 
   namespace Pre_1_2
   {
@@ -250,12 +250,12 @@ namespace Legacy
                 auth_flow_result;
           };
 
-        }  // namespace system
+        }
 
-      }  // namespace services
-    }  // namespace xbox
+      }
+    }
 
-  }  // namespace Pre_1_2
+  }
 
   namespace Pre_0_15_2
   {
@@ -286,11 +286,11 @@ namespace Legacy
                 auth_flow_result;
           };
 
-        }  // namespace system
+        }
 
-      }  // namespace services
-    }  // namespace xbox
+      }
+    }
 
-  }  // namespace Pre_0_15_2
+  }
 
-}  // namespace Legacy
+}

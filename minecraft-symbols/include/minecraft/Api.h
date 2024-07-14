@@ -18,5 +18,5 @@ namespace minecraft
       void** playerInteractionsIfaceVtable;
     };
 
-  }  // namespace api
-}  // namespace minecraft
+  }
+}

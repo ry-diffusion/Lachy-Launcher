@@ -34,4 +34,4 @@ namespace v8
     kLongRunningTask
   };
 
-}  // namespace v8
+}

@@ -9,4 +9,4 @@ namespace Social
    public:
     static std::unique_ptr<Social::UserManager> CreateUserManager();
   };
-}  // namespace Social
+}

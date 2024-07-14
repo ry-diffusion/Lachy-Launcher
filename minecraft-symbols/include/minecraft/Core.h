@@ -26,4 +26,4 @@ namespace Core
     }
   };
 
-}  // namespace Core
+}

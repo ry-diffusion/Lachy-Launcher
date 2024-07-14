@@ -36,6 +36,6 @@ namespace Legacy
       mcpe::string pickerTitle;                       // 52
     };
 
-  }  // namespace Pre_1_8
+  }
 
-}  // namespace Legacy
+}

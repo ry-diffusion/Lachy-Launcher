@@ -17,6 +17,7 @@
 #include <functional>
 
 #include "hbui_patch.h"
+#include "minecraft/MinecraftClient.h"
 #include "window_callbacks.h"
 #include "xbox_live_helper.h"
 #ifdef USE_ARMHF_SUPPORT
@@ -41,7 +42,7 @@
 #include "native_activity.h"
 static char clientInitBackup[5] = { 0 };
 unsigned char *clientInit;
-void *minecraftClient = nullptr;
+MinecraftClient *minecraftClient = nullptr;
 
 #define EGL_NONE 0x3038
 #define EGL_TRUE 1
@@ -591,9 +592,8 @@ int main(int argc, char *argv[])
           void *origFunc = clientInit;
 
           auto fn = (void (*)(void *))(origFunc);
-          Log::trace("MinecraftClient", "init stub called client is: 0x%x",
-                     kthis);
-          minecraftClient = kthis;
+          Log::trace("MinecraftClient", "Collecting client as 0x%x", kthis);
+          minecraftClient = static_cast<MinecraftClient *>(kthis);
           fn(kthis);
         },
         true, clientInitBackup);
@@ -636,7 +636,7 @@ int main(int argc, char *argv[])
   WindowCallbacks windowCallbacks(*window, activity);
   windowCallbacks.handle = handle;
   windowCallbacks.vm = &vm;
-  windowCallbacks.MinecraftClient = &minecraftClient;
+  windowCallbacks.client = &minecraftClient;
   windowCallbacks.registerCallbacks();
   std::thread(
       [&,

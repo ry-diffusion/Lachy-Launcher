@@ -39,6 +39,6 @@ namespace Legacy
       void onQueryProductsSuccess(std::vector<Product> const &);
     };
 
-  }  // namespace Pre_0_17
+  }
 
-}  // namespace Legacy
+}
