@@ -355,7 +355,7 @@ void WindowCallbacks::onGUIFrame() const
     auto text = mcpe::string(ss.str());
     const auto font = mc->getFont();
 
-    font->drawTransformed(text, 0.0f, 0.0f, white, 0.0f, 100.0f, false, 7.0f);
+    font->drawTransformed(text, 0.0f, 0.0f, white, 0.0f, 100.0f, false, 6.0f);
     Screen::tick();
   }
 }

@@ -65,8 +65,6 @@ void LauncherAppPlatform::initVtable(void* lib)
 
   PatchUtils::VtableReplaceHelper vtr(lib, myVtable, vta);
 
-
-
   vtr.replace("_ZNK19AppPlatform_android10getDataUrlEv",
               &LauncherAppPlatform::getDataUrl);
   vtr.replace("_ZNK19AppPlatform_android14getUserDataUrlEv",
