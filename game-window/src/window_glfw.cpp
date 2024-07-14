@@ -1,12 +1,14 @@
 #include "window_glfw.h"
 #include "GLFW/glfw3.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "imgui.h"
 #include "joystick_manager_glfw.h"
 
+#include "backends/imgui_impl_glfw.h"
 #include <codecvt>
 #include <iomanip>
-#include <thread>
-
 #include <math.h>
+#include <thread>
 
 GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
                                GraphicsApi api)
@@ -36,6 +38,8 @@ GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
   glfwSetWindowFocusCallback(window, _glfwWindowFocusCallback);
   glfwSetWindowContentScaleCallback(window, _glfwWindowContentScaleCallback);
   glfwMakeContextCurrent(window);
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplOpenGL3_Init("#version 100");
 
   setRelativeScale();
 }
@@ -77,9 +81,11 @@ void GLFWGameWindow::runLoop() {
     auto drawStart = std::chrono::system_clock::now();
     GLFWJoystickManager::update(this);
     onDraw();
+
     if (!focused)
       std::this_thread::sleep_until(drawStart +
                                     std::chrono::milliseconds(1000 / 20));
+
     glfwPollEvents();
   }
 }
@@ -109,6 +115,15 @@ void GLFWGameWindow::setClipboardText(std::string const &text) {
 }
 
 void GLFWGameWindow::swapBuffers() {
+  // ImGui_ImplOpenGL3_NewFrame();
+  // ImGui_ImplGlfw_NewFrame();
+  // ImGui::NewFrame();
+
+  this->onGUIFrame();
+
+  // ImGui::Render();
+  // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
   glfwSwapBuffers(window);
 
   // Measure speed
@@ -117,11 +132,7 @@ void GLFWGameWindow::swapBuffers() {
   numFrames++;
 
   if (delta >= 1.0) {
-    double fps = double(numFrames) / delta;
-    std::stringstream ss;
-    ss << "Lachy " << "[" << fps << " FPS" << "]";
-
-    glfwSetWindowTitle(window, ss.str().c_str());
+    this->fps = double(numFrames) / delta;
 
     numFrames = 0;
     lastTime = currentTime;

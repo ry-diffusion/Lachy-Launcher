@@ -1,5 +1,7 @@
 #include "window_callbacks.h"
+#include "imgui.h"
 #include "log.h"
+#include "minecraft/std/string_linux.h"
 #include "minecraft_gamepad_mapping.h"
 
 #include "JNIBinding.h"
@@ -16,6 +18,7 @@
 #include <minecraft/legacy/App.h>
 #include <minecraft/legacy/Keyboard.h>
 #include <minecraft/legacy/MinecraftGame.h>
+#include <string>
 #include <thread>
 
 void WindowCallbacks::registerCallbacks() {
@@ -51,8 +54,33 @@ void WindowCallbacks::registerCallbacks() {
       std::bind(&WindowCallbacks::onGamepadAxis, this, _1, _2, _3));
   window.setFocusChangeCallback(
       std::bind(&WindowCallbacks::onFocusChange, this, _1));
+
+  window.setOnGUIFrame(std::bind(&WindowCallbacks::onGUIFrame, this));
 }
 
+class Color {
+public:
+  static const Color BLACK;
+  static const Color BLUE;
+  static const Color CYAN;
+  static const Color GREEN;
+  static const Color GREY;
+  static const Color NIL;
+  static const Color PURPLE;
+  static const Color RED;
+  static const Color WHITE;
+  static const Color YELLOW;
+  static const Color SHADE_DOWN;
+  static const Color SHADE_NORTH_SOUTH;
+  static const Color SHADE_UP;
+  static const Color SHADE_WEST_EAST;
+
+  float r, g, b, a; // 0, 4, 8, 12
+
+  Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a){};
+
+  static Color *fromHSB(float, float, float);
+};
 void WindowCallbacks::onWindowSizeCallback(int w, int h) {
   auto nativeSetRenderingSize = (void (*)(void *, int, int))hybris_dlsym(
       handle, "_ZN15MinecraftClient16setRenderingSizeEii");
@@ -241,4 +269,33 @@ void WindowCallbacks::loadGamepadMappings() {
 WindowCallbacks::GamepadData::GamepadData() {
   stickLeft[0] = stickLeft[1] = 0.f;
   stickRight[0] = stickRight[1] = 0.f;
+}
+
+void WindowCallbacks::onGUIFrame() {
+
+  auto mc = *this->MinecraftClient;
+
+  auto whiteColor = hybris_dlsym(handle, "_ZN5Color5WHITEE");
+  Log::trace("Launcher", "white is: 0x%x", whiteColor);
+
+  Color *white = (Color *)whiteColor;
+
+  Log::trace("Launcher", "white is: %f %f %f %f", white->r, white->g, white->b,
+             white->a);
+
+  auto text = new mcpe::string("Lachy IS THE BEST");
+  auto getFont = (void *(*)(void *mc))hybris_dlsym(
+      handle, "_ZNK15MinecraftClient7getFontEv");
+
+  auto font = getFont(mc);
+
+  auto render =
+      (void (*)(void *Font, mcpe::string *text, float x, float y, Color *color,
+                bool))hybris_dlsym(handle,
+                                   "_ZN4Font10drawShadowERKSsffRK5Colorb");
+  render(font, text, 10.0f, 20.0f, white, false);
+
+  // tick
+  auto tick = (void (*)(void))hybris_dlsym(handle, "_ZN6Screen4tickEv");
+  tick();
 }
