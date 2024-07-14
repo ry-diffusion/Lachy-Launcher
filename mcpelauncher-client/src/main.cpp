@@ -93,9 +93,8 @@ bool useCenteredGUI()
 
 mcpe::string getSetttingsPath()
 {
- return PathHelper::getPrimaryDataDirectory();
+  return PathHelper::getPrimaryDataDirectory();
 }
-
 
 /**
  * Thanks for D4yvid and BlockLauncher
@@ -114,13 +113,12 @@ void patchDesktopUi(PatchUtils::VtableReplaceHelper vtr)
 
 /**
  * Thx Blocklauncher
-*/
+ */
 void patchFixSettingsPath(PatchUtils::VtableReplaceHelper vtr)
 {
- vtr.replace("_ZN11AppPlatform15getSettingsPathEv", &getSetttingsPath);
+  vtr.replace("_ZN11AppPlatform15getSettingsPathEv", &getSetttingsPath);
   vtr.replace("_ZN19AppPlatform_android15getSettingsPathEv", &getSetttingsPath);
 }
-
 
 #ifdef JNI_DEBUG
 void dump()
@@ -647,12 +645,12 @@ int main(int argc, char *argv[])
           initClient(clazz);
 
           Log::trace("MinecraftClient", "Collecting client as 0x%x", clazz);
-          if (!isModern)
-                      minecraftClient->font = client->getFont();
+          if (!isModern) minecraftClient->font = client->getFont();
         },
         true, clientInitBackup);
   }
-  auto clientInstanceInitSym = hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
+  auto clientInstanceInitSym =
+      hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
 
   if (clientInstanceInitSym)
   {
@@ -672,8 +670,8 @@ int main(int argc, char *argv[])
           auto init = (void (*)(void *))(clientInstance);
           init(clazz);
 
-
-          Log::trace("MinecraftClient", "Collecting client instance as 0x%x", clazz);
+          Log::trace("MinecraftClient", "Collecting client instance as 0x%x",
+                     clazz);
         },
         true, clientInstanceBackup);
   }
