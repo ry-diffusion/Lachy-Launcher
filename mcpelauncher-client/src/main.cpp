@@ -15,6 +15,8 @@
 #include <minecraft/MinecraftGame.h>
 
 #include <functional>
+
+#include "mcpelauncher/app_platform.h"
 static bool isModern = false;
 #include "hbui_patch.h"
 #include "minecraft/MinecraftClient.h"
@@ -89,6 +91,12 @@ bool useCenteredGUI()
   return true;
 }
 
+mcpe::string getSetttingsPath()
+{
+ return PathHelper::getPrimaryDataDirectory();
+}
+
+
 /**
  * Thanks for D4yvid and BlockLauncher
  */
@@ -103,6 +111,16 @@ void patchDesktopUi(PatchUtils::VtableReplaceHelper vtr)
   vtr.replace("_ZNK19AppPlatform_android13getScreenTypeEv", &getScreenType);
   vtr.replace("_ZNK19AppPlatform_android10getEditionEv", &getEdition);
 }
+
+/**
+ * Thx Blocklauncher
+*/
+void patchFixSettingsPath(PatchUtils::VtableReplaceHelper vtr)
+{
+ vtr.replace("_ZN11AppPlatform15getSettingsPathEv", &getSetttingsPath);
+  vtr.replace("_ZN19AppPlatform_android15getSettingsPathEv", &getSetttingsPath);
+}
+
 
 #ifdef JNI_DEBUG
 void dump()
@@ -565,6 +583,7 @@ int main(int argc, char *argv[])
   vtr.replace("_ZN11AppPlatform16hideMousePointerEv", hide);
   vtr.replace("_ZN11AppPlatform16showMousePointerEv", show);
   patchDesktopUi(vtr);
+  patchFixSettingsPath(vtr);
 
   auto client =
       hybris_dlsym(handle,
