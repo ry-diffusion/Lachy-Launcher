@@ -78,6 +78,7 @@ void WindowCallbacks::onWindowSizeCallback(int w, int h)
       handle, "_ZN15MinecraftClient17setUISizeAndScaleEiif");
 
   void *mc = *this->client;
+  if (!mc) return;
   Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, w, h);
   nativeSetRenderingSize(mc, w, h);
   nativeSetUI(mc, w, h, 0.0f);
@@ -327,6 +328,7 @@ void measureMemoryUsage(size_t &rss, size_t &virt)
 void WindowCallbacks::onGUIFrame()
 {
   auto mc = *this->client;
+  if (!mc) return;
 
   if (debugScreen)
   {

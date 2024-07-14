@@ -586,15 +586,16 @@ int main(int argc, char *argv[])
 
     PatchUtils::patchCallInstruction(
         clientInitSym,
-        (void *)+[](void *kthis)
+        (void *)+[](void *clazz)
         {
-          memcpy(&clientInit[0], clientInitBackup, sizeof(int));
-          void *origFunc = clientInit;
+          minecraftClient = static_cast<MinecraftClient *>(clazz);
+          memcpy(&clientInit[0], clientInitBackup, sizeof(int) + 1);
 
-          auto fn = (void (*)(void *))(origFunc);
-          Log::trace("MinecraftClient", "Collecting client as 0x%x", kthis);
-          minecraftClient = static_cast<MinecraftClient *>(kthis);
-          fn(kthis);
+          auto initClient = (void (*)(void *))(clientInit);
+
+          initClient(clazz);
+
+          Log::trace("MinecraftClient", "Collecting client as 0x%x", clazz);
         },
         true, clientInitBackup);
   }
@@ -658,7 +659,9 @@ int main(int argc, char *argv[])
       .detach();
   while (!uithread_started.load())
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
   window->prepareRunLoop();
+
   auto res = main_routine(main_arg);
   _Exit(0);
 }
