@@ -12,7 +12,7 @@ GLFWWindowManager::GLFWWindowManager()
   if (glfwInit() != GLFW_TRUE)
   {
     const char *description;
-    int code = glfwGetError(&description);
+    (void)glfwGetError(&description);
 
     throw std::runtime_error("An error occurred while initializing GLFW: " +
                              std::string(description));

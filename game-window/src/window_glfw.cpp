@@ -7,6 +7,7 @@
 #include <iostream>
 #include <thread>
 
+#include "../../logger/include/log.h"
 #include "GLFW/glfw3.h"
 #include "joystick_manager_glfw.h"
 
@@ -43,6 +44,16 @@ GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
   glfwSetWindowFocusCallback(window, _glfwWindowFocusCallback);
   glfwSetWindowContentScaleCallback(window, _glfwWindowContentScaleCallback);
   glfwMakeContextCurrent(window);
+
+  if (glfwRawMouseMotionSupported())
+  {
+    Log::info("GLFW", "Raw Motion is Supported. Using it!");
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+  }
+  else
+  {
+    Log::info("GLFW", "Can't use Raw Motion :c");
+  }
 
   setRelativeScale();
 }

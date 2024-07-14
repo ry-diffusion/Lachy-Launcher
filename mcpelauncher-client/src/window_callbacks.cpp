@@ -319,9 +319,9 @@ void measureMemoryUsage(size_t &rss, size_t &virt)
   virt *= getpagesize();
 }
 
-void WindowCallbacks::onGUIFrame()
+void WindowCallbacks::onGUIFrame() const
 {
-  auto mc = *this->client;
+  const auto mc = *this->client;
 
   if (debugScreen)
   {
@@ -338,10 +338,9 @@ void WindowCallbacks::onGUIFrame()
     ss << "Memory: " << rss / 1024 / 1024 << "MB / " << virt / 1024 / 1024
        << "MB" << std::endl;
 
-    auto windowManager = GameWindowManager::getManager();
-
-    auto glGetString =
-        (const char *(*)(int))windowManager->getProcAddrFunc()("glGetString");
+    const auto windowManager = GameWindowManager::getManager();
+    const auto glGetString =
+        reinterpret_cast<const char *(*)(int)>(windowManager->getProcAddrFunc()("glGetString"));
 
     ss << "Renderer: " << glGetString(0x1F01) << " (" << glGetString(0x1F00)
        << ")" << std::endl;
@@ -349,11 +348,9 @@ void WindowCallbacks::onGUIFrame()
     ss << "GLSL Version: " << glGetString(0x8B8C) << std::endl;
 
     auto text = mcpe::string(ss.str());
-    auto font = mc->getFont();
+    const auto font = mc->getFont();
 
-    Screen::tick();
     font->drawShadow(text, 0, 0, white);
-
     Screen::tick();
   }
 }
