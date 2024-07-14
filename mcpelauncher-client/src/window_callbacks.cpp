@@ -75,7 +75,7 @@ void WindowCallbacks::onWindowSizeCallback(int width, int height)
   Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, width,
             height);
   mc->setRenderingSize(width, height);
-  mc->setUISizeAndScale(width, height, 1.0f);
+  mc->setUISizeAndScale(width, height, 0.0f);
 }
 
 void WindowCallbacks::onClose()
