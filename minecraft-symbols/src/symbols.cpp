@@ -1,5 +1,5 @@
 // This file was automatically generated using tools/process_headers.py
-// Generated on Sun Jul 14 2024 12:32:45 UTC
+// Generated on Sun Jul 14 2024 13:37:34 UTC
 
 #include <hybris/dlfcn.h>
 #include <log.h>
@@ -302,6 +302,14 @@ Level * Minecraft::getLevel() const {
 static Font * (MinecraftClient::*_MinecraftClient_getFont)();
 Font * MinecraftClient::getFont() {
     return (this->*_MinecraftClient_getFont)();
+}
+static void (MinecraftClient::*_MinecraftClient_setRenderingSize)(int, int);
+void MinecraftClient::setRenderingSize(int p1, int p2) {
+    (this->*_MinecraftClient_setRenderingSize)(p1, p2);
+}
+static void (MinecraftClient::*_MinecraftClient_setUISizeAndScale)(int, int, float);
+void MinecraftClient::setUISizeAndScale(int p1, int p2, float p3) {
+    (this->*_MinecraftClient_setUISizeAndScale)(p1, p2, p3);
 }
 
 #include <minecraft/MinecraftCommands.h>
@@ -1037,6 +1045,8 @@ void minecraft_symbols_init(void* handle) {
     ((void*&) _Minecraft_getCommands) = minecraft_dlsym(handle, "_ZN9Minecraft11getCommandsEv");
     ((void*&) _Minecraft_getLevel) = minecraft_dlsym(handle, "_ZNK9Minecraft8getLevelEv");
     ((void*&) _MinecraftClient_getFont) = minecraft_dlsym(handle, "_ZNK15MinecraftClient7getFontEv");
+    ((void*&) _MinecraftClient_setRenderingSize) = minecraft_dlsym(handle, "_ZN15MinecraftClient16setRenderingSizeEii");
+    ((void*&) _MinecraftClient_setUISizeAndScale) = minecraft_dlsym(handle, "_ZN15MinecraftClient17setUISizeAndScaleEiif");
     ((void*&) _MinecraftCommands_setOutputSender) = minecraft_dlsym(handle, "_ZN17MinecraftCommands15setOutputSenderESt10unique_ptrI19CommandOutputSenderSt14default_deleteIS1_EE");
     ((void*&) _MinecraftCommands_requestCommandExecution) = minecraft_dlsym(handle, "_ZNK17MinecraftCommands23requestCommandExecutionESt10unique_ptrI13CommandOriginSt14default_deleteIS1_EERKSsib");
     ((void*&) _MinecraftEventing_MinecraftEventing) = minecraft_dlsym(handle, "_ZN17MinecraftEventingC2ERKSs");

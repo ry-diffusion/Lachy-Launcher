@@ -69,19 +69,13 @@ void WindowCallbacks::registerCallbacks()
   window.setOnGUIFrame(std::bind(&WindowCallbacks::onGUIFrame, this));
 }
 
-void WindowCallbacks::onWindowSizeCallback(int w, int h)
+void WindowCallbacks::onWindowSizeCallback(int width, int height)
 {
-  auto nativeSetRenderingSize = (void (*)(void *, int, int))hybris_dlsym(
-      handle, "_ZN15MinecraftClient16setRenderingSizeEii");
-
-  auto nativeSetUI = (void (*)(void *, int, int, float))hybris_dlsym(
-      handle, "_ZN15MinecraftClient17setUISizeAndScaleEiif");
-
-  void *mc = *this->client;
-  if (!mc) return;
-  Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, w, h);
-  nativeSetRenderingSize(mc, w, h);
-  nativeSetUI(mc, w, h, 0.0f);
+  auto *mc = *this->client;
+  Log::info("Launcher", "Resizing... App is: 0x%x To: %dx%d", mc, width,
+            height);
+  mc->setRenderingSize(width, height);
+  mc->setUISizeAndScale(width, height, 1.0f);
 }
 
 void WindowCallbacks::onClose()
@@ -328,7 +322,6 @@ void measureMemoryUsage(size_t &rss, size_t &virt)
 void WindowCallbacks::onGUIFrame()
 {
   auto mc = *this->client;
-  if (!mc) return;
 
   if (debugScreen)
   {
