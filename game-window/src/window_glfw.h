@@ -6,8 +6,8 @@
 class GLFWGameWindow : public GameWindow
 {
  private:
-  double lastTime;
-  int numFrames;
+  double lastTime = 0;
+  int numFrames = 0;
   GLFWwindow *window;
   double lastMouseX = 0.0, lastMouseY = 0.0;
   int windowedX = -1, windowedY = -1;

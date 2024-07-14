@@ -72,7 +72,7 @@ class GameWindow
   using FocusChangeCallback = std::function<void(bool)>;
   using OnGUIFrame = std::function<void()>;
 
-  double fps = -1;
+  double fps = 1.0;
 
  private:
   DrawCallback drawCallback;
@@ -92,6 +92,9 @@ class GameWindow
   CloseCallback closeCallback;
   FocusChangeCallback focusChangeCallback;
   OnGUIFrame guiFrameCallback;
+
+ protected:
+  bool usingVsync = true;
 
  public:
   GameWindow(std::string const &title, int width, int height, GraphicsApi api)
@@ -219,6 +222,19 @@ class GameWindow
   void setOnGUIFrame(OnGUIFrame callback)
   {
     guiFrameCallback = std::move(callback);
+  }
+
+  void setVsync(bool vsync)
+  {
+    usingVsync = vsync;
+    if (usingVsync)
+    {
+      swapInterval(1);
+    }
+    else
+    {
+      swapInterval(0);
+    }
   }
 
  protected:

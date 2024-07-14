@@ -4,6 +4,7 @@
 
 #include <codecvt>
 #include <iomanip>
+#include <iostream>
 #include <thread>
 
 #include "GLFW/glfw3.h"
@@ -142,10 +143,6 @@ void GLFWGameWindow::setClipboardText(std::string const &text)
 
 void GLFWGameWindow::swapBuffers()
 {
-  this->onGUIFrame();
-
-  glfwSwapBuffers(window);
-
   // Measure speed
   double currentTime = glfwGetTime();
   double delta = currentTime - lastTime;
@@ -154,10 +151,12 @@ void GLFWGameWindow::swapBuffers()
   if (delta >= 1.0)
   {
     this->fps = double(numFrames) / delta;
-
     numFrames = 0;
     lastTime = currentTime;
   }
+
+  this->onGUIFrame();
+  glfwSwapBuffers(window);
 }
 
 void GLFWGameWindow::pollEvents()
@@ -168,7 +167,10 @@ void GLFWGameWindow::pollEvents()
 
 void GLFWGameWindow::swapInterval(int interval)
 {
-  glfwSwapInterval(interval);
+  if (!this->usingVsync)
+    glfwSwapInterval(0);
+  else
+    glfwSwapInterval(interval);
 }
 
 void GLFWGameWindow::_glfwWindowSizeCallback(GLFWwindow *window, int w, int h)

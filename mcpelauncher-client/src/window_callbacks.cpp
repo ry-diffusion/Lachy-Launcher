@@ -12,17 +12,22 @@
 #include <minecraft/legacy/App.h>
 #include <minecraft/legacy/Keyboard.h>
 #include <minecraft/legacy/MinecraftGame.h>
+#include <unistd.h>
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <thread>
 
+#include "GLFW/glfw3.h"
 #include "JNIBinding.h"
+#include "game_window.h"
 #include "log.h"
 #include "minecraft/Color.h"
 #include "minecraft/Font.h"
 #include "minecraft/MinecraftClient.h"
 #include "minecraft/Screen.h"
+#include "minecraft/gl.h"
 #include "minecraft/std/string_linux.h"
 #include "minecraft_gamepad_mapping.h"
 
@@ -162,7 +167,26 @@ void WindowCallbacks::onKeyboard(int key, KeyAction action)
           ->onKeyboardDirectionKey(jnivm::com::mojang::minecraftpe::
                                        MainActivity::DirectionKey::EndKey);
   }
-  if (key == 112 + 10 && action == KeyAction::PRESS)
+
+  Log::trace("Launcher", "key is %i, action is %i", key, action);
+
+  // F3
+  if (key == 111 + 3 && action == KeyAction::PRESS)
+  {
+    this->debugScreen = !this->debugScreen;
+  }
+
+  // F9
+  if (key == 111 + 9 && action == KeyAction::PRESS)
+  {
+    this->enableVSync = !this->enableVSync;
+    Log::trace("Launcher", "VSync %s",
+               this->enableVSync ? "enabled" : "disabled");
+    window.setVsync(enableVSync);
+  }
+
+  // F11
+  if (key == 111 + 11 && action == KeyAction::PRESS)
     window.setFullscreen(fullscreen = !fullscreen);
   if ((action == KeyAction::PRESS || action == KeyAction::RELEASE) && key < 256)
   {
@@ -290,14 +314,51 @@ WindowCallbacks::GamepadData::GamepadData()
   stickRight[0] = stickRight[1] = 0.f;
 }
 
+void measureMemoryUsage(size_t &rss, size_t &virt)
+{
+  std::ifstream file("/proc/self/statm");
+
+  file >> virt >> rss;
+
+  rss *= getpagesize();
+  virt *= getpagesize();
+}
+
 void WindowCallbacks::onGUIFrame()
 {
   auto mc = *this->client;
-  auto white = Color(1.0f, 0.0f, 1.0f, 1.0f);
 
-  auto text = mcpe::string("Lachy IS THE BEST");
-  auto font = mc->getFont();
+  if (debugScreen)
+  {
+    auto white = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    size_t virt, rss;
 
-  font->drawShadow(text, 10, 20, white);
-  Screen::tick();
+    measureMemoryUsage(rss, virt);
+    std::stringstream ss;
+
+    ss << "Lachy - DEBUG SCREEN (PRESS F3 TO QUIT AND F9 TO TOGGLE VSYNC)"
+       << std::endl;
+    ss << "FPS: " << window.fps << std::endl;
+    ss << "VSync: " << (enableVSync ? "enabled" : "disabled") << std::endl;
+    ss << "Memory: " << rss / 1024 / 1024 << "MB / " << virt / 1024 / 1024
+       << "MB" << std::endl;
+
+    auto windowManager = GameWindowManager::getManager();
+
+    auto glGetString =
+        (const char *(*)(int))windowManager->getProcAddrFunc()("glGetString");
+
+    ss << "Renderer: " << glGetString(0x1F01) << " (" << glGetString(0x1F00)
+       << ")" << std::endl;
+    ss << "GL Version: " << glGetString(0x1F02) << std::endl;
+    ss << "GLSL Version: " << glGetString(0x8B8C) << std::endl;
+
+    auto text = mcpe::string(ss.str());
+    auto font = mc->getFont();
+
+    Screen::tick();
+    font->drawShadow(text, 0, 0, white);
+
+    Screen::tick();
+  }
 }

@@ -28,6 +28,8 @@ class WindowCallbacks
   std::unordered_map<int, GamepadData> gamepads;
   bool modCTRL = false;
   bool fullscreen = false;
+  bool debugScreen = false;
+  bool enableVSync = true;
 
  public:
   MinecraftClient **client;

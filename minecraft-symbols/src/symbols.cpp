@@ -1,5 +1,5 @@
 // This file was automatically generated using tools/process_headers.py
-// Generated on Sun Jul 14 2024 12:28:11 UTC
+// Generated on Sun Jul 14 2024 12:32:45 UTC
 
 #include <hybris/dlfcn.h>
 #include <log.h>
@@ -204,8 +204,8 @@ const mcpe::string & Core::FilePathManager::getSettingsPath() const {
 #include <minecraft/FilePickerSettings.h>
 
 #include <minecraft/Font.h>
-static void (Font::*_Font_drawShadow)(mcpe::string const &, float, float, Color const &);
-void Font::drawShadow(mcpe::string const & p1, float p2, float p3, Color const & p4) {
+static void (Font::*_Font_drawShadow)(mcpe::string &, float, float, Color &);
+void Font::drawShadow(mcpe::string & p1, float p2, float p3, Color & p4) {
     (this->*_Font_drawShadow)(p1, p2, p3, p4);
 }
 
