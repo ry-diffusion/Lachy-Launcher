@@ -1,12 +1,15 @@
 #include <coremod.h>
+#include <game_window_manager.h>
 #include <minecraft/Screen.h>
 #include <minecraft/SharedConstants.h>
 #include <unistd.h>
+
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <sstream>
-#include <game_window_manager.h>
+
+#include "log.h"
 
 void measureMemoryUsage(size_t &rss, size_t &virt)
 {
@@ -23,10 +26,11 @@ class MoreInfos : public CoreMod
   bool isHudOpen = false;
   GenericMinecraft *mc = nullptr;
   std::shared_ptr<GameWindow> gameWindow;
+  const char* TAG = "MoreInfos";
 
   void onLoad() override
   {
-    std::cout << "MoreInfo Loaded!\n";
+    Log::info(TAG, "Mod Loaded!");
   }
 
   void onStart(GenericMinecraft *genericMinecraft) override
