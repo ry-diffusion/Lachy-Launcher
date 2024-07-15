@@ -49,6 +49,13 @@ enum class GamepadAxisId
   UNKNOWN = -1
 };
 
+enum class LimitFPSMode
+{
+  Unlimited = 2,
+  Limited = 1,
+  VSync = 0
+};
+
 class GameWindow
 {
  public:
@@ -73,6 +80,9 @@ class GameWindow
   using OnGUIFrame = std::function<void()>;
 
   double fps = 1.0;
+  float targetFPS = 60.0;
+
+  LimitFPSMode limitFpsMode = LimitFPSMode::VSync;
 
  private:
   DrawCallback drawCallback;
@@ -92,10 +102,6 @@ class GameWindow
   CloseCallback closeCallback;
   FocusChangeCallback focusChangeCallback;
   OnGUIFrame guiFrameCallback;
-
- protected:
-  bool usingVsync = true;
-
  public:
   GameWindow(std::string const &title, int width, int height, GraphicsApi api)
   {
@@ -224,18 +230,6 @@ class GameWindow
     guiFrameCallback = std::move(callback);
   }
 
-  void setVsync(bool vsync)
-  {
-    usingVsync = vsync;
-    if (usingVsync)
-    {
-      swapInterval(1);
-    }
-    else
-    {
-      swapInterval(0);
-    }
-  }
 
  protected:
   void onDraw()

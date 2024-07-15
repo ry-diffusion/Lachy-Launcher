@@ -167,19 +167,12 @@ void WindowCallbacks::onKeyboard(int key, KeyAction action)
 
   Log::trace("Launcher", "key is %i, action is %i", key, action);
 
-  // F3
-  if (key == 111 + 3 && action == KeyAction::PRESS)
-  {
-    this->debugScreen = !this->debugScreen;
-  }
+  CoreModLoader::getInstance()->onKeyboardInput(key , static_cast<int>(action));
 
-  // F9
-  if (key == 111 + 9 && action == KeyAction::PRESS)
+  // F12
+  if (key == 111 + 12 && action == KeyAction::PRESS)
   {
-    this->enableVSync = !this->enableVSync;
-    Log::trace("Launcher", "VSync %s",
-               this->enableVSync ? "enabled" : "disabled");
-    window.setVsync(enableVSync);
+    this->lachyUIScreen = !this->lachyUIScreen;
   }
 
   // F11
@@ -311,57 +304,26 @@ WindowCallbacks::GamepadData::GamepadData()
   stickRight[0] = stickRight[1] = 0.f;
 }
 
-void measureMemoryUsage(size_t &rss, size_t &virt)
-{
-  std::ifstream file("/proc/self/statm");
 
-  file >> virt >> rss;
 
-  rss *= getpagesize();
-  virt *= getpagesize();
-}
-
-void WindowCallbacks::onGUIFrame() const
+void WindowCallbacks::onGUIFrame()
 {
   const auto mc = *this->client;
 
-  if (debugScreen)
+  if (lachyUIScreen)
   {
-    auto white = Color(1.0f, 1.0f, 1.0f, 1.0f);
-    size_t virt, rss;
+    ImGui::Begin("Lachy.UI");
+    ImGui::SeparatorText("Advanced Graphics Settings");
 
-    measureMemoryUsage(rss, virt);
-    std::stringstream ss;
+    const char *vals[] = { "VSync", "Limited", "Unlimited" };
+    ImGui::Combo("FPS Mode", (int *)&window.limitFpsMode, vals, 3);
 
-    ss << "Lachy - Minecraft " << *SharedConstants::MajorVersion << "."
-       << *SharedConstants::MinorVersion << "."
-       << *SharedConstants::PatchVersion;
-    ss << " (PRESS F3 TO QUIT AND F9 TO TOGGLE VSYNC)"
+    if (LimitFPSMode::Limited == window.limitFpsMode)
+      ImGui::SliderFloat("Target FPS", &window.targetFPS, 10, 600, "%.1f",
+                         ImGuiSliderFlags_None);
 
-       << std::endl;
-    ss << "FPS: " << window.fps << std::endl;
-    ss << "VSync: " << (enableVSync ? "enabled" : "disabled") << std::endl;
-    ss << "Memory: " << rss / 1024 / 1024 << "MB / " << virt / 1024 / 1024
-       << "MB" << std::endl;
-
-    const auto windowManager = GameWindowManager::getManager();
-    const auto glGetString = reinterpret_cast<const char *(*)(int)>(
-        windowManager->getProcAddrFunc()("glGetString"));
-
-
-    ss << "Renderer: " << glGetString(0x1F01) << " (" << glGetString(0x1F00)
-       << ")" << std::endl;
-    ss << "GL Version: " << glGetString(0x1F02) << std::endl;
-    ss << "GLSL Version: " << glGetString(0x8B8C) << std::endl;
-
-    auto text = mcpe::string(ss.str());
-    const auto font = mc->getFont();
-
-    font->drawTransformed(text, 0.0f, 0.0f, white, 0.0f, 100.0f, false, 6.0f);
-
-    Screen::tick();
+    ImGui::End();
   }
-
 
   CoreModLoader::getInstance()->onGUIRequested();
 }

@@ -63,10 +63,13 @@ std::shared_ptr<CoreModLoader> CoreModLoader::getInstance()
 
 void CoreModLoader::loadModsFromDirectory(std::string const& path)
 {
+  if (path.at(0) != '/')
+    throw std::runtime_error("Path must be absolute!");
+
   DIR* dir = opendir(path.c_str());
   dirent* ent;
   if (dir == nullptr) return;
-  Log::info("ModLoader", "Loading mods");
+  Log::info("CoreModLoader", "Loading mods");
   std::set<std::string> modsToLoad;
   while ((ent = readdir(dir)) != nullptr)
   {
@@ -80,6 +83,8 @@ void CoreModLoader::loadModsFromDirectory(std::string const& path)
     modsToLoad.insert(fileName);
   }
   closedir(dir);
+
+  Log::info("CoreModLoader", "Found %li mods to load.", modsToLoad.size());
   while (!modsToLoad.empty())
   {
     auto it = modsToLoad.begin();
@@ -88,7 +93,7 @@ void CoreModLoader::loadModsFromDirectory(std::string const& path)
 
     loadModMulti(path, fileName, modsToLoad);
   }
-  Log::info("COreModLoader", "Loaded %li mods", mods.size());
+  Log::info("CoreModLoader", "Loaded %li mods", mods.size());
 }
 
 void CoreModLoader::onCreate(void* handle)
@@ -118,6 +123,27 @@ void CoreModLoader::onGUIRequested()
     const auto func =
         reinterpret_cast<void (*)()>(dlsym(mod, "coremod_onGUIRequested"));
     if (func) func();
+  }
+}
+
+void CoreModLoader::onKeyboardInput(int key, int action)
+{
+  for (const auto& mod : this->mods)
+  {
+    const auto func =
+        reinterpret_cast<void (*)(int, int)>(dlsym(mod, "coremod_onKeyboardInput"));
+    if (func) func(key, action);
+  }
+}
+
+
+void CoreModLoader::onGameWindowCreated(std::shared_ptr<GameWindow> gameWindow)
+{
+   for (const auto& mod : this->mods)
+  {
+    const auto func =
+        reinterpret_cast<void (*)(std::shared_ptr<GameWindow>)>(dlsym(mod, "coremod_onGameWindowCreated"));
+    if (func) func(gameWindow);
   }
 }
 

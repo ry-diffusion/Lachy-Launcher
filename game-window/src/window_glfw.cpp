@@ -58,8 +58,9 @@ GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
   {
     Log::info("GLFW", "Can't use Raw Motion :c");
   }
-
   setRelativeScale();
+
+  lastTimeTargetFPS = glfwGetTime();
 }
 
 GLFWGameWindow::~GLFWGameWindow()
@@ -164,20 +165,29 @@ void GLFWGameWindow::swapBuffers()
 
   // Measure speed
   const double currentTime = glfwGetTime();
-  const double delta = currentTime - lastTime;
+  const double delta = currentTime - lastTimePerformance;
   numFrames++;
+
+  this->onGUIFrame();
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
   if (delta >= 1.0)
   {
     this->fps = static_cast<double>(numFrames) / delta;
     numFrames = 0;
-    lastTime = currentTime;
+    lastTimePerformance = currentTime;
+  }
+  
+  if (limitFpsMode == LimitFPSMode::Limited)
+  {
+    while (glfwGetTime() < (lastTimeTargetFPS + 1.0 / targetFPS))
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
   }
 
-  this->onGUIFrame();
-
-  ImGui::Render();
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  lastTimeTargetFPS += 1.0 / targetFPS;
   glfwSwapBuffers(window);
 }
 
@@ -189,10 +199,10 @@ void GLFWGameWindow::pollEvents()
 
 void GLFWGameWindow::swapInterval(int interval)
 {
-  if (!this->usingVsync)
-    glfwSwapInterval(0);
-  else
+  if (LimitFPSMode::VSync == limitFpsMode)
     glfwSwapInterval(interval);
+  else
+    glfwSwapInterval(0);
 }
 
 void GLFWGameWindow::_glfwWindowSizeCallback(GLFWwindow *window, int w, int h)

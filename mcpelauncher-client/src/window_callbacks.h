@@ -29,8 +29,7 @@ class WindowCallbacks
   std::unordered_map<int, GamepadData> gamepads;
   bool modCTRL = false;
   bool fullscreen = false;
-  bool debugScreen = false;
-  bool enableVSync = true;
+  bool lachyUIScreen = false;
 
  public:
   GenericMinecraft**client;
@@ -72,5 +71,5 @@ class WindowCallbacks
   void onGamepadButton(int gamepad, GamepadButtonId btn, bool pressed);
   void onGamepadAxis(int gamepad, GamepadAxisId ax, float value);
   void onFocusChange(bool hasfocus);
-  void onGUIFrame() const;
+  void onGUIFrame() ;
 };

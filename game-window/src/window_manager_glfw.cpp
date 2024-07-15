@@ -29,8 +29,7 @@ GameWindowManager::ProcAddrFunc GLFWWindowManager::getProcAddrFunc()
 std::shared_ptr<GameWindow> GLFWWindowManager::createWindow(
     const std::string &title, int width, int height, GraphicsApi api)
 {
-  return std::shared_ptr<GameWindow>(
-      new GLFWGameWindow(title, width, height, api));
+  return std::make_shared<GLFWGameWindow>(title, width, height, api);
 }
 
 void GLFWWindowManager::addGamepadMappingFile(const std::string &path)

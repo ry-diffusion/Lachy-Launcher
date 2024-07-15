@@ -194,9 +194,9 @@ int main(int argc, char *argv[])
   (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
   io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+      ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
   io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+      ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
   ImGui::StyleColorsClassic();
 
@@ -268,8 +268,9 @@ int main(int argc, char *argv[])
 
   Log::info("Launcher", "Creating window");
   WindowCallbacks::loadGamepadMappings();
-  static auto window = windowManager->createWindow("Minecraft", windowWidth,
+  static auto window = windowManager->createWindow("Lachy", windowWidth,
                                                    windowHeight, graphicsApi);
+
   window->setIcon(PathHelper::getIconPath());
   window->show();
   hybris_hook(
@@ -612,7 +613,10 @@ int main(int argc, char *argv[])
   }
 
   auto coreModLoader = CoreModLoader::getInstance();
+
   coreModLoader->loadModsFromDirectory(PathHelper::getPrimaryDataDirectory() +
+                                       "coremods/");
+  coreModLoader->loadModsFromDirectory(PathHelper::getWorkingDir() +
                                        "coremods/");
 
   MinecraftUtils::initSymbolBindings(handle);
@@ -745,6 +749,7 @@ int main(int argc, char *argv[])
 
   window->prepareRunLoop();
 
+  CoreModLoader::getInstance()->onGameWindowCreated(window);
   auto res = main_routine(main_arg);
   _Exit(0);
 }

@@ -126,6 +126,8 @@ add_subdirectory(minecraft-symbols)
 add_subdirectory(minecraft-imported-symbols)
 add_subdirectory(mcpelauncher-common)
 add_subdirectory(mcpelauncher-core)
+add_subdirectory(coremod)
+add_subdirectory(lachy-coremods)
 
 if (BUILD_CLIENT)
     add_subdirectory(mcpelauncher-client)

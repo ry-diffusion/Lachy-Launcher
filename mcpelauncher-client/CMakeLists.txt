@@ -29,3 +29,5 @@ endif()
 
 install(TARGETS mcpelauncher-client RUNTIME COMPONENT mcpelauncher-client DESTINATION bin)
 include(CPackSettings.cmake)
+
+add_dependencies(mcpelauncher-client MoreInfos)

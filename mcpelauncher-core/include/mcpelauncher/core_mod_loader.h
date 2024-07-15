@@ -6,7 +6,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+class GameWindow;
 class CoreModLoader
 {
  private:
@@ -28,4 +28,6 @@ class CoreModLoader
   void onCreate(void*handle);
   void onStart(GenericMinecraft *genericMinecraft);
   void onGUIRequested();
+  void onKeyboardInput(int key, int action);
+  void onGameWindowCreated(std::shared_ptr<GameWindow> gameWindow);
 };
