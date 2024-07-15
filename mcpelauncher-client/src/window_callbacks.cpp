@@ -312,7 +312,7 @@ void WindowCallbacks::onGUIFrame()
 
   if (lachyUIScreen)
   {
-    ImGui::Begin("Lachy.UI");
+    ImGui::Begin("Lachy.UI", nullptr, ImGuiWindowFlags_NoSavedSettings);
     ImGui::SeparatorText("Advanced Graphics Settings");
 
     const char *vals[] = { "VSync", "Limited", "Unlimited" };

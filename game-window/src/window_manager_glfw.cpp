@@ -40,5 +40,5 @@ void GLFWWindowManager::addGamepadMappingFile(const std::string &path)
 // Define this window manager as the used one
 std::shared_ptr<GameWindowManager> GameWindowManager::createManager()
 {
-  return std::shared_ptr<GameWindowManager>(new GLFWWindowManager());
+  return std::make_shared<GLFWWindowManager>();
 }
