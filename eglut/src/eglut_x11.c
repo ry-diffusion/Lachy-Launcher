@@ -23,19 +23,21 @@
  *    Chia-I Wu <olv@lunarg.com>
  */
 
-#include <locale.h>
+#include "eglut_x11.h"
+
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/X.h>
-#include <X11/keysym.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <malloc.h>
 #include <X11/extensions/XInput2.h>
+#include <X11/keysym.h>
+#include <locale.h>
+#include <malloc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "eglutint.h"
-#include "eglut_x11.h"
 #include "xinput.h"
 
 void

@@ -1,5 +1,7 @@
 #include "window_glfw.h"
 
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <math.h>
 
 #include <codecvt>
@@ -44,6 +46,8 @@ GLFWGameWindow::GLFWGameWindow(const std::string &title, int width, int height,
   glfwSetWindowFocusCallback(window, _glfwWindowFocusCallback);
   glfwSetWindowContentScaleCallback(window, _glfwWindowContentScaleCallback);
   glfwMakeContextCurrent(window);
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplOpenGL3_Init("#version 100");
 
   if (glfwRawMouseMotionSupported())
   {
@@ -154,19 +158,26 @@ void GLFWGameWindow::setClipboardText(std::string const &text)
 
 void GLFWGameWindow::swapBuffers()
 {
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+
   // Measure speed
-  double currentTime = glfwGetTime();
-  double delta = currentTime - lastTime;
+  const double currentTime = glfwGetTime();
+  const double delta = currentTime - lastTime;
   numFrames++;
 
   if (delta >= 1.0)
   {
-    this->fps = double(numFrames) / delta;
+    this->fps = static_cast<double>(numFrames) / delta;
     numFrames = 0;
     lastTime = currentTime;
   }
 
   this->onGUIFrame();
+
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   glfwSwapBuffers(window);
 }
 

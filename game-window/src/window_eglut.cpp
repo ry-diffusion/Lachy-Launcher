@@ -1,5 +1,7 @@
 #include "window_eglut.h"
 
+#include <backends/imgui_impl_glut.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <eglut.h>
 #include <eglut_x11.h>
 

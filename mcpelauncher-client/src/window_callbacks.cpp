@@ -2,6 +2,7 @@
 
 #include <game_window_manager.h>
 #include <hybris/dlfcn.h>
+#include <imgui.h>
 #include <jni.h>
 #include <mcpelauncher/minecraft_version.h>
 #include <minecraft/GameControllerManager.h>
@@ -20,10 +21,10 @@
 #include <string>
 #include <thread>
 
-#include "GLFW/glfw3.h"
 #include "JNIBinding.h"
 #include "game_window.h"
 #include "log.h"
+#include "mcpelauncher/core_mod_loader.h"
 #include "minecraft/Color.h"
 #include "minecraft/Font.h"
 #include "minecraft/MinecraftClient.h"
@@ -347,6 +348,7 @@ void WindowCallbacks::onGUIFrame() const
     const auto glGetString = reinterpret_cast<const char *(*)(int)>(
         windowManager->getProcAddrFunc()("glGetString"));
 
+
     ss << "Renderer: " << glGetString(0x1F01) << " (" << glGetString(0x1F00)
        << ")" << std::endl;
     ss << "GL Version: " << glGetString(0x1F02) << std::endl;
@@ -356,6 +358,10 @@ void WindowCallbacks::onGUIFrame() const
     const auto font = mc->getFont();
 
     font->drawTransformed(text, 0.0f, 0.0f, white, 0.0f, 100.0f, false, 6.0f);
+
     Screen::tick();
   }
+
+
+  CoreModLoader::getInstance()->onGUIRequested();
 }

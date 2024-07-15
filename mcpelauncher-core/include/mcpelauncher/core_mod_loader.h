@@ -1,16 +1,18 @@
 #pragma once
 
+#include <minecraft/GenericMinecraft.h>
+
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-class MinecraftGame;
-class ServerInstance;
-
-class ModLoader
+class CoreModLoader
 {
  private:
   std::vector<void*> mods;
+
+  static std::shared_ptr<CoreModLoader> m_Instance;
 
   static std::vector<std::string> getModDependencies(std::string const& path);
 
@@ -18,11 +20,12 @@ class ModLoader
                     std::set<std::string>& otherMods);
 
  public:
-  void* loadMod(std::string const& path);
+  static std::shared_ptr<CoreModLoader> getInstance();
+  static void* loadMod(std::string const& path);
 
   void loadModsFromDirectory(std::string const& path);
 
-  void onGameInitialized(MinecraftGame* game);
-
-  void onServerInstanceInitialized(ServerInstance* server);
+  void onCreate(void*handle);
+  void onStart(GenericMinecraft *genericMinecraft);
+  void onGUIRequested();
 };

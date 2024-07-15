@@ -3,6 +3,7 @@
 #include <game_window_manager.h>
 #include <hybris/dlfcn.h>
 #include <hybris/hook.h>
+#include <imgui.h>
 #include <log.h>
 #include <mcpelauncher/crash_handler.h>
 #include <mcpelauncher/minecraft_utils.h>
@@ -17,6 +18,7 @@
 #include <functional>
 
 #include "mcpelauncher/app_platform.h"
+#include "mcpelauncher/core_mod_loader.h"
 static bool isModern = false;
 #include "hbui_patch.h"
 #include "minecraft/MinecraftClient.h"
@@ -56,8 +58,6 @@ using EGLContext = void *;
 using EGLConfig = void *;
 using NativeWindowType = void *;
 using NativeDisplayType = void *;
-
-
 
 GenericMinecraft *minecraftClient = nullptr;
 JNIEnv *jnienv = nullptr;
@@ -184,8 +184,21 @@ FMOD_ChannelControl_addFadePoint(FMOD::ChannelControl *ch, unsigned long long i,
 int main(int argc, char *argv[])
 {
   static auto windowManager = GameWindowManager::getManager();
+
   CrashHandler::registerCrashHandler();
   MinecraftUtils::workaroundLocaleBug();
+
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO &io = ImGui::GetIO();
+  (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+  ImGui::StyleColorsClassic();
 
   argparser::arg_parser p;
   argparser::arg<bool> printVersion(p, "--version", "-v",
@@ -598,6 +611,10 @@ int main(int argc, char *argv[])
         true);
   }
 
+  auto coreModLoader = CoreModLoader::getInstance();
+  coreModLoader->loadModsFromDirectory(PathHelper::getPrimaryDataDirectory() +
+                                       "coremods/");
+
   MinecraftUtils::initSymbolBindings(handle);
   void *clientInitSym;
 
@@ -636,7 +653,11 @@ int main(int argc, char *argv[])
           Log::trace("MinecraftClient", "Collecting client as %p init is: %p",
                      clazz, init);
           init(clazz);
-          if (!isModern) minecraftClient->font = client->getFont();
+          if (!isModern)
+          {
+            minecraftClient->font = client->getFont();
+            CoreModLoader::getInstance()->onStart(minecraftClient);
+          }
         });
   }
 
@@ -656,8 +677,11 @@ int main(int argc, char *argv[])
 
           update(instance);
           minecraftClient->font = instance->getFont();
+          CoreModLoader::getInstance()->onStart(minecraftClient);
         });
   }
+
+  coreModLoader->onCreate(handle);
 
   ModLoader modLoader;
   modLoader.loadModsFromDirectory(PathHelper::getPrimaryDataDirectory() +
