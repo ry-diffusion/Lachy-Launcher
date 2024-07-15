@@ -57,9 +57,7 @@ using EGLConfig = void *;
 using NativeWindowType = void *;
 using NativeDisplayType = void *;
 
-static char clientInitBackup[5] = { 0 };
-static char clientInstanceBackup[5] = { 0 };
-unsigned char *clientInit, *clientInstance;
+
 
 GenericMinecraft *minecraftClient = nullptr;
 JNIEnv *jnienv = nullptr;
@@ -617,63 +615,48 @@ int main(int argc, char *argv[])
   }
 
   assert(clientInitSym != nullptr);
+  auto clientInstanceUpdate =
+      hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
 
   if (clientInitSym)
   {
-    clientInit = (unsigned char *)clientInitSym;
-
-    PatchUtils::patchCallInstruction(
-        clientInitSym,
-        (void *)+[](void *clazz)
+    void *Token = OnceToken();
+    PatchUtils::once(
+        Token, clientInitSym,
+        (void *)+[](void (*init)(void *), void *clazz)
         {
-          auto client = static_cast<MinecraftClient *>(clazz);
+          const auto client = static_cast<MinecraftClient *>(clazz);
+          const auto game = static_cast<MinecraftGame *>(clazz);
 
           if (isModern)
-          {
-            auto game = static_cast<MinecraftGame *>(clazz);
             minecraftClient = new GenericMinecraft(game, nullptr);
-          }
           else
-          {
             minecraftClient = new GenericMinecraft(nullptr, client);
-          }
 
-          memcpy(&clientInit[0], clientInitBackup, sizeof(int) + 1);
-
-          auto initClient = (void (*)(void *))(clientInit);
-
-          initClient(clazz);
-
-          Log::trace("MinecraftClient", "Collecting client as 0x%x", clazz);
-          if (!isModern) minecraftClient->font = client->getFont();
-        },
-        true, clientInitBackup);
-  }
-  auto clientInstanceInitSym =
-      hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
-
-  if (clientInstanceInitSym)
-  {
-    Log::info("Launcher", "Patching CI Instance");
-
-    clientInstance = (unsigned char *)clientInstanceInitSym;
-
-    PatchUtils::patchCallInstruction(
-        clientInstanceInitSym,
-        (void *)+[](void *clazz)
-        {
-          auto instance = static_cast<ClientInstance *>(clazz);
-          minecraftClient->font = instance->getFont();
-
-          memcpy(&clientInstance[0], clientInstanceBackup, sizeof(int) + 1);
-
-          auto init = (void (*)(void *))(clientInstance);
+          Log::trace("MinecraftClient", "Collecting client as %p init is: %p",
+                     clazz, init);
           init(clazz);
+          if (!isModern) minecraftClient->font = client->getFont();
+        });
+  }
 
-          Log::trace("MinecraftClient", "Collecting client instance as 0x%x",
-                     clazz);
-        },
-        true, clientInstanceBackup);
+  if (clientInstanceUpdate)
+  {
+    Log::info("Launcher", "Patching CI Instance, %p", clientInstanceUpdate);
+    void *Token = OnceToken();
+    PatchUtils::once(
+        Token, clientInstanceUpdate,
+        (void *)+[](void (*update)(void *), void *clazz)
+        {
+          const auto instance = static_cast<ClientInstance *>(clazz);
+
+          Log::trace("MinecraftClient",
+                     "Collecting ClientInstance as %p and update is %p", clazz,
+                     update);
+
+          update(instance);
+          minecraftClient->font = instance->getFont();
+        });
   }
 
   ModLoader modLoader;
