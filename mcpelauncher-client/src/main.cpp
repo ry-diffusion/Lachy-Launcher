@@ -16,6 +16,7 @@
 #include <minecraft/MinecraftGame.h>
 
 #include <functional>
+#include <iostream>
 
 #include "mcpelauncher/app_platform.h"
 #include "mcpelauncher/core_mod_loader.h"
@@ -181,6 +182,84 @@ FMOD_ChannelControl_addFadePoint(FMOD::ChannelControl *ch, unsigned long long i,
 }
 #endif
 
+static char initBackup[5] = {};
+static char clientInstanceBackup[5] = {};
+static void *clientInitSym = nullptr;
+static void *clientInstanceUpdate = nullptr;
+
+void setupInitHooks(void *handle)
+{
+  assert(nullptr != handle);
+
+  if (*SharedConstants::MajorVersion >= 1 &&
+      *SharedConstants::MinorVersion >= 1)
+  {
+    Log::info("Launcher", "Using Modern Game Init");
+    isModern = true;
+    clientInitSym = hybris_dlsym(handle, "_ZN13MinecraftGame4initEv");
+  }
+  else
+  {
+    Log::info("Launcher", "Using Legacy Client Init");
+    clientInitSym = hybris_dlsym(handle, "_ZN15MinecraftClient4initEv");
+  }
+
+  assert(clientInitSym != nullptr);
+
+  if (clientInitSym)
+  {
+    PatchUtils::patchCallInstruction(
+        clientInitSym,
+        (void *)+[](void *clazz)
+        {
+          const auto client = static_cast<MinecraftClient *>(clazz);
+          const auto game = static_cast<MinecraftGame *>(clazz);
+
+          if (isModern)
+            minecraftClient = new GenericMinecraft(game, nullptr);
+          else
+            minecraftClient = new GenericMinecraft(nullptr, client);
+
+          memcpy(clientInitSym, initBackup, 5);
+          const auto init = reinterpret_cast<void (*)(void *)>(clientInitSym);
+
+          Log::trace("Launcher", "Collecting client as %p init is: %p", clazz,
+                     init);
+          init(clazz);
+          if (!isModern)
+          {
+            minecraftClient->font = client->getFont();
+            CoreModLoader::getInstance()->onStart(minecraftClient);
+          }
+        },
+        true, initBackup);
+  }
+
+  clientInstanceUpdate = hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
+
+  if (clientInstanceUpdate)
+  {
+    Log::info("Launcher", "Patching CI Instance, %p", clientInstanceUpdate);
+    PatchUtils::patchCallInstruction(
+        clientInstanceUpdate,
+        (void *)+[](void *clazz)
+        {
+          const auto instance = static_cast<ClientInstance *>(clazz);
+          memcpy(clientInstanceUpdate, clientInstanceBackup, 5);
+          const auto update =
+              reinterpret_cast<void (*)(void *)>(clientInstanceUpdate);
+
+          Log::trace("Launcher",
+                     "Collecting ClientInstance as %p and update is %p", clazz,
+                     update);
+          update(instance);
+          minecraftClient->font = instance->getFont();
+          CoreModLoader::getInstance()->onStart(minecraftClient);
+        },
+        true, clientInstanceBackup);
+  }
+}
+
 int main(int argc, char *argv[])
 {
   static auto windowManager = GameWindowManager::getManager();
@@ -198,7 +277,7 @@ int main(int argc, char *argv[])
   io.ConfigFlags |=
       ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
-  ImGui::StyleColorsClassic();
+  ImGui::StyleColorsLight();
 
   argparser::arg_parser p;
   argparser::arg<bool> printVersion(p, "--version", "-v",
@@ -227,6 +306,14 @@ int main(int argc, char *argv[])
   if (!dataDir.get().empty()) PathHelper::setDataDir(dataDir);
   if (!cacheDir.get().empty()) PathHelper::setCacheDir(cacheDir);
   if (mallocZero) MinecraftUtils::setMallocZero();
+
+  if (PathHelper::getGameDir() == PathHelper::getPrimaryDataDirectory())
+  {
+    std::cerr << "ERROR: NO GAME DIRECTORY FOUND.\n";
+    std::cerr << "PLEASE PROVIDE A GAME DIRECTORY WITH --game-dir\n";
+    std::cerr << "Bye.\n";
+    abort();
+  }
 
   Log::info("Launcher", "Version: client %s / manifest %s",
             CLIENT_GIT_COMMIT_HASH, MANIFEST_GIT_COMMIT_HASH);
@@ -592,7 +679,9 @@ int main(int argc, char *argv[])
   PatchUtils::VtableReplaceHelper vtr(handle, vt, vta);
   vtr.replace("_ZN11AppPlatform16hideMousePointerEv", hide);
   vtr.replace("_ZN11AppPlatform16showMousePointerEv", show);
+
   patchDesktopUi(vtr);
+
   patchFixSettingsPath(vtr);
 
   auto client =
@@ -620,70 +709,8 @@ int main(int argc, char *argv[])
                                        "coremods/");
 
   MinecraftUtils::initSymbolBindings(handle);
-  void *clientInitSym;
 
-  if (*SharedConstants::MajorVersion >= 1 &&
-      *SharedConstants::MinorVersion >= 1)
-  {
-    Log::info("Launcher", "Using Modern Game Init");
-    isModern = true;
-    clientInitSym = hybris_dlsym(handle, "_ZN13MinecraftGame4initEv");
-  }
-  else
-  {
-    Log::info("Launcher", "Using Legacy Client Init");
-    clientInitSym = hybris_dlsym(handle, "_ZN15MinecraftClient4initEv");
-  }
-
-  assert(clientInitSym != nullptr);
-  auto clientInstanceUpdate =
-      hybris_dlsym(handle, "_ZN14ClientInstance6updateEv");
-
-  if (clientInitSym)
-  {
-    void *Token = OnceToken();
-    PatchUtils::once(
-        Token, clientInitSym,
-        (void *)+[](void (*init)(void *), void *clazz)
-        {
-          const auto client = static_cast<MinecraftClient *>(clazz);
-          const auto game = static_cast<MinecraftGame *>(clazz);
-
-          if (isModern)
-            minecraftClient = new GenericMinecraft(game, nullptr);
-          else
-            minecraftClient = new GenericMinecraft(nullptr, client);
-
-          Log::trace("MinecraftClient", "Collecting client as %p init is: %p",
-                     clazz, init);
-          init(clazz);
-          if (!isModern)
-          {
-            minecraftClient->font = client->getFont();
-            CoreModLoader::getInstance()->onStart(minecraftClient);
-          }
-        });
-  }
-
-  if (clientInstanceUpdate)
-  {
-    Log::info("Launcher", "Patching CI Instance, %p", clientInstanceUpdate);
-    void *Token = OnceToken();
-    PatchUtils::once(
-        Token, clientInstanceUpdate,
-        (void *)+[](void (*update)(void *), void *clazz)
-        {
-          const auto instance = static_cast<ClientInstance *>(clazz);
-
-          Log::trace("MinecraftClient",
-                     "Collecting ClientInstance as %p and update is %p", clazz,
-                     update);
-
-          update(instance);
-          minecraftClient->font = instance->getFont();
-          CoreModLoader::getInstance()->onStart(minecraftClient);
-        });
-  }
+  setupInitHooks(handle);
 
   coreModLoader->onCreate(handle);
 
