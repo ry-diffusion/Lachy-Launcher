@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
                                   "memory, this may help workaround MCPE bugs");
   argparser::arg<bool> disableFmod(p, "--disable-fmod", "-df",
                                    "Disables usage of the FMod audio library");
-  if (!p.parse(argc, (const char **)argv)) return 1;
+  if (!p.parse(argc, const_cast<const char **>(argv))) return 1;
   if (printVersion)
   {
     printVersionInfo();
