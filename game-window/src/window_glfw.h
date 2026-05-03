@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <game_window.h>
 
+#include <utility>
+
 class GLFWGameWindow : public GameWindow
 {
  private:
@@ -13,7 +15,7 @@ class GLFWGameWindow : public GameWindow
   double lastMouseX = 0.0, lastMouseY = 0.0;
   int windowedX = -1, windowedY = -1;
   int windowedWidth = -1, windowedHeight = -1;
-  int relativeScale;
+  float xScale, yScale;
   bool focused = true;
 
   friend class GLFWJoystickManager;
@@ -41,7 +43,7 @@ class GLFWGameWindow : public GameWindow
 
   void setIcon(std::string const &iconPath) override;
 
-  int getRelativeScale() const;
+  std::pair<float, float> getRelativeScale() const;
 
   void setRelativeScale();
 

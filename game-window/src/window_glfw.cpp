@@ -5,9 +5,10 @@
 #include <math.h>
 
 #include <codecvt>
-#include <iomanip>
 #include <iostream>
+#include <locale>
 #include <thread>
+#include <utility>
 
 #include "../../logger/include/log.h"
 #include "GLFW/glfw3.h"
@@ -76,18 +77,16 @@ void GLFWGameWindow::setIcon(std::string const &iconPath)
 
 void GLFWGameWindow::setRelativeScale()
 {
-  int fx, fy;
-  glfwGetFramebufferSize(window, &fx, &fy);
+  float xs, ys;
+  glfwGetWindowContentScale(window, &xs, &ys);
 
-  int wx, wy;
-  glfwGetWindowSize(window, &wx, &wy);
-
-  relativeScale = (int)floor(((fx / wx) + (fy / wy)) / 2);
+  xScale = xs;
+  yScale = ys;
 }
 
-int GLFWGameWindow::getRelativeScale() const
+std::pair<float, float> GLFWGameWindow::getRelativeScale() const
 {
-  return relativeScale;
+  return std::make_pair(xScale, yScale);
 }
 
 void GLFWGameWindow::getWindowSize(int &width, int &height) const
@@ -178,7 +177,7 @@ void GLFWGameWindow::swapBuffers()
     numFrames = 0;
     lastTimePerformance = currentTime;
   }
-  
+
   if (limitFpsMode == LimitFPSMode::Limited)
   {
     while (glfwGetTime() < (lastTimeTargetFPS + 1.0 / targetFPS))
@@ -218,8 +217,13 @@ void GLFWGameWindow::_glfwCursorPosCallback(GLFWwindow *window, double x,
 
   if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
   {
+#ifdef __linux__
+    double dx = x - user->lastMouseX;
+    double dy = y - user->lastMouseY;
+#else
     double dx = (x - user->lastMouseX) * user->getRelativeScale();
     double dy = (y - user->lastMouseY) * user->getRelativeScale();
+#endif
 
     user->onMouseRelativePosition(dx, dy);
     user->lastMouseX = x;
@@ -227,8 +231,8 @@ void GLFWGameWindow::_glfwCursorPosCallback(GLFWwindow *window, double x,
   }
   else
   {
-    x *= user->getRelativeScale();
-    y *= user->getRelativeScale();
+    x *= user->xScale;
+    y *= user->yScale;
 
     user->onMousePosition(x, y);
   }
@@ -241,8 +245,8 @@ void GLFWGameWindow::_glfwMouseButtonCallback(GLFWwindow *window, int button,
   double x, y;
   glfwGetCursorPos(window, &x, &y);
 
-  x *= user->getRelativeScale();
-  y *= user->getRelativeScale();
+  x *= user->xScale;
+  y *= user->yScale;
 
   user->onMouseButton(x, y, button + 1,
                       action == GLFW_PRESS ? MouseButtonAction::PRESS
@@ -368,7 +372,9 @@ void GLFWGameWindow::_glfwKeyCallback(GLFWwindow *window, int key, int scancode,
 void GLFWGameWindow::_glfwCharCallback(GLFWwindow *window, unsigned int ch)
 {
   GLFWGameWindow *user = (GLFWGameWindow *)glfwGetWindowUserPointer(window);
+
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+
   user->onKeyboardText(cvt.to_bytes(ch));
 }
 
