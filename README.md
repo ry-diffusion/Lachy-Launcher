@@ -149,7 +149,8 @@ cmake -B build -S . \
     -DGAMEWINDOW_SYSTEM=GLFW \
     -DGLFW_BUILD_WAYLAND=1 \
     -DCMAKE_TOOLCHAIN_FILE=cmake/linux32.cmake \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
 cmake --build build -j$(nproc)
 
@@ -159,7 +160,8 @@ cmake -B build -S . \
     -DGLFW_BUILD_WAYLAND=1 \
     -DCMAKE_TOOLCHAIN_FILE=cmake/linux32.cmake \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
 cmake --build build -j$(nproc)
 ```
