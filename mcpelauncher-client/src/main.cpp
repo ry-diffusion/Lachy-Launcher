@@ -45,6 +45,7 @@ static bool isModern = false;
 #include <unistd.h>
 
 #include <fstream>
+#include <mutex>
 
 #include "JNIBinding.h"
 #include "OpenSLESPatch.h"
@@ -81,6 +82,7 @@ static constexpr size_t ASSET_CACHE_MAX_FILE_SIZE =
 
 // Simple bounded cache (no LRU tracking to avoid hybris compatibility issues)
 static std::unordered_map<std::string, std::string> g_assetCache;
+static std::mutex g_assetCacheMutex;
 static bool g_enableAssetCache = true;
 static size_t g_assetCacheHits = 0;
 static size_t g_assetCacheMisses = 0;
@@ -191,9 +193,12 @@ mcpe::string readAssetFileLegacy(void* self, mcpe::string const& path)
 
   std::string pathStr = path.std();
 
-  // Check cache first
+  // Check cache first. Minecraft may call readAssetFile from multiple worker
+  // threads, so all access to the shared unordered_map must be serialized.
   if (g_enableAssetCache)
   {
+    std::lock_guard<std::mutex> lock(g_assetCacheMutex);
+
     auto it = g_assetCache.find(pathStr);
     if (it != g_assetCache.end())
     {
@@ -247,6 +252,8 @@ mcpe::string readAssetFileLegacy(void* self, mcpe::string const& path)
   if (g_enableAssetCache &&
       static_cast<size_t>(size) < ASSET_CACHE_MAX_FILE_SIZE)
   {
+    std::lock_guard<std::mutex> lock(g_assetCacheMutex);
+
     trimAssetCache();
     g_assetCache[pathStr] = buffer;
   }
